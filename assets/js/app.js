@@ -119,182 +119,140 @@
   };
 
   const homeView = () => {
-    const heroCopy = element("div", { className: "hero-copy" }, [
-      eyebrow(data.subtitle),
-      element("h1", {}, [
-        data.title,
-        element("span", { text: "Percorso di Formazione Umana e Professionale" })
-      ]),
-      element("p", { className: "hero-payoff", text: data.payoff }),
-      element("p", {
-        className: "hero-intro",
-        text: "Presentazioni, discussioni, strumenti visivi e testimonianze diventano un’esperienza da attraversare: chiara nei contenuti, umana nel linguaggio."
-      }),
-      element("div", { className: "button-row" }, [
-        buttonLink("Inizia la prima videolezione", resourceHref(resources[0])),
-        buttonLink("Esplora il percorso", "#percorso-formativo", "secondary")
-      ])
-    ]);
+    const homepageModules = resources.map((resource, index) => ({
+      number: index + 1,
+      label: `Modulo ${index + 1}`,
+      resource
+    }));
+    const homepageIcons = ["dialogue", "dialogue", "bridge", "pages"];
 
-    const heroArt = element("div", { className: "hero-art", "aria-hidden": "true" }, [
-      element("div", { className: "hero-aura" }),
-      element("div", { className: "hero-visual-notes" }, [
-        element("div", { className: "hero-signal signal-listen" }, [
-          icon("dialogue", "hero-signal-icon"),
-          element("span", { text: "Ascolto" })
-        ]),
-        element("div", { className: "hero-signal signal-method" }, [
-          icon("bridge", "hero-signal-icon"),
-          element("span", { text: "Metodo" })
-        ]),
-        element("div", { className: "hero-signal signal-relation" }, [
-          icon("hands", "hero-signal-icon"),
-          element("span", { text: "Relazione" })
-        ])
-      ]),
-      element("div", { className: "hero-character-field" }, [
-        element("div", { className: "hero-stage-mark", text: "S · E · M · P · R · E" }),
-        element("img", {
-          className: "hero-character",
-          src: "assets/brand/sempre-character.png",
-          alt: "",
-          width: "543",
-          height: "697"
-        })
-      ])
-    ]);
-
-    const hero = section("hero", [
-      heroCopy,
-      heroArt,
-      element("div", { className: "acronym-ribbon", "aria-label": "Significato dell'acronimo S.E.M.P.R.E." },
-        data.acronym.map((word) => element("span", { text: word })))
-    ]);
-
-    const journeyHeading = element("div", { className: "section-heading" }, [
-      element("div", {}, [
-        eyebrow("PERCORSO FORMATIVO"),
-        element("h2", { text: "Tre capitoli, una traiettoria umana." })
-      ]),
-      element("p", {
-        text: "La linea narrativa descrive l’architettura editoriale del corso. I primi due capitoli organizzano i materiali previsti; il terzo introduce un’architettura narrativa già definita, da implementare nella sua esperienza interattiva."
-      })
-    ]);
-
-    const journeyMap = element("div", { className: "journey-map" }, [
-      element("div", { className: "journey-line", "aria-hidden": "true" }),
-      ...data.chapters.map((chapter) => {
-        const active = chapter.status === "available";
-        return element("article", { className: `chapter-station${active ? " active" : ""}` }, [
-          element("span", {
-            className: "chapter-number",
-            text: String(chapter.number).padStart(2, "0"),
-            "aria-hidden": "true"
-          }),
-          element("span", {
-            className: `status-pill${active ? " available" : ""}`,
-            text: chapter.statusLabel
-          }),
-          element("h3", { text: chapter.title }),
-          element("p", { text: chapter.description }),
+    const hero = section("home-hero", [
+      element("div", { className: "home-hero-inner" }, [
+        element("div", { className: "home-hero-copy" }, [
+          element("p", { className: "home-eyebrow", text: data.subtitle }),
+          element("h1", { text: data.title }),
+          element("p", { className: "home-hero-payoff", text: data.payoff }),
           element("p", {
-            className: "chapter-meta",
-            text: active
-              ? "3 moduli · 1 disponibile in demo"
-              : chapter.modules.length
-                ? `${chapter.modules.length} moduli in preparazione`
-                : "Struttura da definire"
+            className: "home-hero-intro",
+            text: "Presentazioni, discussioni, strumenti visivi e testimonianze diventano un’esperienza chiara nei contenuti e umana nel linguaggio."
           }),
-          element("div", { className: "button-row" }, [
-            buttonLink(
-              active
-                ? "Inizia dal primo contenuto"
-                : chapter.modules.length
-                  ? "Vedi i contenuti previsti"
-                  : "Vedi il capitolo",
-              active ? resourceHref(resources[0]) : `#/capitolo/${chapter.number}`,
-              active ? "light" : "secondary"
-            )
+          element("a", {
+            className: "home-primary-link",
+            href: "#capitolo-1-moduli",
+            "aria-label": "Scopri i moduli disponibili nel Capitolo 1",
+            onClick: (event) => {
+              event.preventDefault();
+              document.querySelector("#capitolo-1-moduli")?.scrollIntoView({
+                behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+                  ? "auto"
+                  : "smooth"
+              });
+            }
+          }, [
+            element("span", { text: "Scopri i moduli" }),
+            element("span", { className: "home-link-arrow", text: "→", "aria-hidden": "true" })
           ])
-        ]);
-      })
-    ]);
-
-    const journey = section("journey-section", [
-      element("div", { id: "percorso-formativo", className: "section-shell" }, [
-        journeyHeading,
-        journeyMap
+        ]),
+        element("div", { className: "home-hero-art", "aria-hidden": "true" }, [
+          element("span", { className: "home-hero-arc home-hero-arc-blue" }),
+          element("span", { className: "home-hero-arc home-hero-arc-ochre" }),
+          element("span", { className: "home-chalk-mark home-chalk-mark-one" }),
+          element("span", { className: "home-chalk-mark home-chalk-mark-two" }),
+          element("img", {
+            className: "home-hero-character",
+            src: "assets/brand/sempre-character.png",
+            alt: "",
+            width: "543",
+            height: "697"
+          }),
+          element("span", { className: "home-hero-word home-hero-word-listen", text: "Ascolto" }),
+          element("span", { className: "home-hero-word home-hero-word-method", text: "Metodo" }),
+          element("span", { className: "home-hero-word home-hero-word-relation", text: "Relazione" })
+        ])
       ])
     ]);
 
-    const editorialModes = section("editorial-modes", [
-      element("div", { className: "section-shell" }, [
-        element("div", { className: "editorial-intro" }, [
+    const moduleCards = homepageModules.map(({ number, label, resource }, index) =>
+      element("a", {
+        className: `home-module-card home-module-card-${number}`,
+        href: resourceHref(resource),
+        "aria-label": `${label}: ${resource.title}. Apri il modulo`
+      }, [
+        element("div", { className: "home-module-card-top" }, [
+          element("span", {
+            className: "home-module-number",
+            text: `MODULO ${String(number).padStart(2, "0")}`
+          }),
+          icon(homepageIcons[index], "home-module-icon")
+        ]),
+        element("p", { className: "home-module-category", text: resource.category }),
+        element("h3", { text: resource.title }),
+        element("span", { className: "home-module-chalk", "aria-hidden": "true" }),
+        element("div", { className: "home-module-card-bottom" }, [
+          element("span", { className: "home-module-status", text: "Disponibile" }),
+          element("span", { className: "home-module-cta" }, [
+            element("span", { text: "Apri il modulo" }),
+            element("span", { className: "home-link-arrow", text: "→", "aria-hidden": "true" })
+          ])
+        ])
+      ]));
+
+    const modules = section("home-modules", [
+      element("div", { id: "capitolo-1-moduli", className: "home-section-shell" }, [
+        element("div", { className: "home-modules-heading" }, [
           element("div", {}, [
-            eyebrow("UN PERCORSO, PIÙ LINGUAGGI"),
-            element("h2", { text: "La conoscenza prende forma quando cambia punto di vista." })
+            element("p", { className: "home-eyebrow", text: "CAPITOLO 1" }),
+            element("h2", { text: "Moduli disponibili" })
           ]),
           element("p", {
-            text: "La base editoriale alterna esposizione, confronto e strumenti visivi. La demo traduce questi formati in un sistema coerente e leggibile."
+            text: "Accedi direttamente ai quattro contenuti disponibili nella versione dimostrativa."
           })
         ]),
-        element("div", { className: "mode-grid" }, [
-          element("article", { className: "mode-card mode-card-large" }, [
-            element("span", { className: "mode-index", text: "01" }),
-            icon("pages", "mode-icon"),
-            element("p", { className: "micro-label", text: "ORIENTARE" }),
-            element("h3", { text: "Presentazioni" }),
-            element("p", { text: "Una traccia visiva accompagna ogni modulo e rende riconoscibile la struttura." })
-          ]),
-          element("article", { className: "mode-card mode-card-warm" }, [
-            element("span", { className: "mode-index", text: "02" }),
-            icon("dialogue", "mode-icon"),
-            element("p", { className: "micro-label", text: "CONFRONTARE" }),
-            element("h3", { text: "Discussioni e interviste" }),
-            element("p", { text: "Le voci professionali e le testimonianze aprono il contenuto alla relazione." })
-          ]),
-          element("article", { className: "mode-card mode-card-light" }, [
-            element("span", { className: "mode-index", text: "03" }),
-            icon("bridge", "mode-icon"),
-            element("p", { className: "micro-label", text: "TRADURRE" }),
-            element("h3", { text: "Storie e strumenti visivi" }),
-            element("p", { text: "Storie sociali, fumetti e strumenti educativi trasformano concetti in esperienze concrete." })
-          ])
+        element("div", {
+          className: "home-module-rail",
+          role: "list",
+          "aria-label": "Contenuti disponibili del Capitolo 1",
+          tabindex: "0"
+        }, moduleCards.map((card) => element("div", { className: "home-module-item", role: "listitem" }, card)))
+      ])
+    ]);
+
+    const chapterStages = data.chapters.map((chapter) => {
+      const active = chapter.number === 1;
+      return element("a", {
+        className: `home-chapter-stage${active ? " is-active" : ""}`,
+        href: `#/capitolo/${chapter.number}`,
+        "aria-label": `${chapter.title}: ${chapter.statusLabel}`
+      }, [
+        element("span", {
+          className: "home-chapter-number",
+          text: String(chapter.number).padStart(2, "0"),
+          "aria-hidden": "true"
+        }),
+        element("span", { className: "home-chapter-copy" }, [
+          element("span", { className: "home-chapter-title", text: chapter.title }),
+          element("span", { className: "home-chapter-status", text: chapter.statusLabel }),
+          active
+            ? element("span", { className: "home-chapter-cta", text: "Esplora il capitolo →" })
+            : null
+        ])
+      ]);
+    });
+
+    const chapters = section("home-chapters", [
+      element("div", { className: "home-section-shell" }, [
+        element("div", { className: "home-chapters-heading" }, [
+          element("p", { className: "home-eyebrow", text: "IL PERCORSO" }),
+          element("h2", { text: "Tre capitoli, una direzione condivisa." })
+        ]),
+        element("nav", { className: "home-chapter-map", "aria-label": "Mappa dei capitoli" }, [
+          element("span", { className: "home-chapter-line", "aria-hidden": "true" }),
+          ...chapterStages
         ])
       ])
     ]);
 
-    const previewList = element("div", { className: "resource-stack" },
-      resources.map((resource) =>
-        element("a", { className: "preview-resource", href: resourceHref(resource) }, [
-          element("div", { className: "resource-visual", "aria-hidden": "true" }, [
-            element("span", { text: String(resource.order).padStart(2, "0") })
-          ]),
-          element("div", { className: "preview-resource-copy" }, [
-            element("small", { text: `${resource.category} · Risorsa ${resource.order} di 4` }),
-            element("h3", { text: resource.title }),
-            element("p", { text: resource.description })
-          ])
-        ])));
-
-    const preview = section("module-preview", [
-      element("div", { className: "section-shell module-editorial" }, [
-        element("div", { className: "module-copy" }, [
-          eyebrow("DENTRO IL CAPITOLO 1"),
-          element("h2", { text: "Modulo 1" }),
-          element("p", { className: "module-subtitle", text: moduleOne.subtitle }),
-          element("p", {
-            text: moduleOne.description
-          }),
-          element("div", { className: "button-row" }, [
-            buttonLink("Avvia la prima videolezione", resourceHref(resources[0]))
-          ])
-        ]),
-        previewList
-      ])
-    ]);
-
-    return view(hero, journey, editorialModes, preview);
+    return view(hero, modules, chapters);
   };
 
   const chapterOneView = () => {
