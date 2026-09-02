@@ -107,15 +107,22 @@
 
   const view = (...children) => element("div", { className: "view" }, children);
 
-  const resourceHref = (resource) =>
-    `#/capitolo/1/modulo/1/${resource.id}`;
+  const resourceHref = (resource, module = moduleOne) =>
+    `#/capitolo/1/modulo/${module.number}/${resource.id}`;
 
   const isVideoResource = (resource) =>
     resource.type === "vimeo" || resource.type === "youtube";
 
   const resourceIconName = (resource) => {
+    if (resource.type === "pdf-guide") return "pages";
     if (resource.type === "heyzine") return "pages";
     return ["dialogue", "heart", "bridge"][resource.order - 1] || "dialogue";
+  };
+
+  const resourceActionLabel = (resource) => {
+    if (isVideoResource(resource)) return "Guarda la videolezione";
+    if (resource.type === "pdf-guide") return "Apri la presentazione";
+    return "Sfoglia il flipbook";
   };
 
   const homeView = () => {
@@ -277,7 +284,7 @@
                 element("span", { text: "moduli previsti" })
               ]),
               element("div", { className: "stat" }, [
-                element("strong", { text: "4" }),
+                element("strong", { text: String(chapterOne.modules.reduce((total, module) => total + module.resources.length, 0)) }),
                 element("span", { text: "risorse disponibili" })
               ])
             ]),
@@ -342,7 +349,7 @@
                   : null
               ]),
               available
-                ? buttonLink("Inizia dal primo contenuto", resourceHref(resources[0]), "light")
+                ? buttonLink("Inizia dal primo contenuto", resourceHref(module.resources[0], module), "light")
                 : element("span", { className: "roadmap-mark", "aria-hidden": "true", text: "↗" })
             ]);
           }))
@@ -352,39 +359,40 @@
     return view(intro, moduleRoadmap);
   };
 
-  const moduleView = () => {
+  const moduleView = (module = moduleOne) => {
+    const moduleResources = module.resources;
     const heading = section("page-hero", [
       element("div", { className: "section-shell compact" }, [
         breadcrumb([
           { label: "Home", href: "#/" },
           { label: "Capitolo 1", href: "#/capitolo/1" },
-          { label: "Modulo 1" }
+          { label: module.title }
         ]),
         eyebrow("CONTENUTI DISPONIBILI NELLA VERSIONE DIMOSTRATIVA"),
-        element("h1", { className: "page-title", text: moduleOne.title }),
-        element("p", { className: "module-page-subtitle", text: moduleOne.subtitle }),
+        element("h1", { className: "page-title", text: module.title }),
+        element("p", { className: "module-page-subtitle", text: module.subtitle }),
         element("p", {
           className: "page-intro",
-          text: moduleOne.description
+          text: module.description
         })
       ])
     ]);
 
-    const cards = resources.map((resource) =>
+    const cards = moduleResources.map((resource) =>
       element("article", { className: "resource-card" }, [
         element("div", { className: "resource-card-visual" }, icon(resourceIconName(resource))),
         element("div", { className: "resource-card-body" }, [
           element("div", { className: "resource-card-topline" }, [
             element("span", { className: "resource-kind", text: resource.category }),
-            element("span", { className: "resource-count", text: `Risorsa ${resource.order} di 4` })
+            element("span", { className: "resource-count", text: `Risorsa ${resource.order} di ${moduleResources.length}` })
           ]),
           element("h2", { text: resource.title }),
           element("p", { className: "resource-description", text: resource.description }),
           element("span", { className: "status-pill available", text: "Disponibile" }),
           element("div", { className: "button-row" }, [
             buttonLink(
-              isVideoResource(resource) ? "Guarda la videolezione" : "Sfoglia il flipbook",
-              resourceHref(resource)
+              resourceActionLabel(resource),
+              resourceHref(resource, module)
             )
           ])
         ])
@@ -433,20 +441,83 @@
     return iframe;
   };
 
-  const resourceView = (resource) => {
-    const currentIndex = resources.findIndex((item) => item.id === resource.id);
-    const previous = resources[currentIndex - 1];
-    const next = resources[currentIndex + 1];
-    const shortLabel = resource.id === "flipbook"
-      ? "Flipbook"
-      : `Parte ${resource.order}`;
+  const guideViewer = (resource) => {
+    let currentPage = 1;
+    const pageSource = (page) => resource.pagePath.replace("{page}", String(page).padStart(2, "0"));
+    const pageImage = element("img", {
+      className: "guide-page-image",
+      src: pageSource(currentPage),
+      alt: `Pagina ${currentPage} di ${resource.pageCount}: ${resource.title}`,
+      width: "1280",
+      height: "720"
+    });
+    const pageLabel = element("p", {
+      className: "guide-page-status",
+      text: `Pagina ${currentPage} di ${resource.pageCount}`,
+      "aria-live": "polite"
+    });
+    const previousButton = element("button", {
+      className: "guide-control",
+      type: "button",
+      text: "Pagina precedente",
+      disabled: true
+    });
+    const nextButton = element("button", {
+      className: "guide-control",
+      type: "button",
+      text: "Pagina successiva"
+    });
+
+    const goToPage = (page, direction) => {
+      if (page < 1 || page > resource.pageCount || page === currentPage) return;
+      currentPage = page;
+      pageImage.classList.remove("is-entering", "is-forward", "is-backward");
+      void pageImage.offsetWidth;
+      pageImage.src = pageSource(currentPage);
+      pageImage.alt = `Pagina ${currentPage} di ${resource.pageCount}: ${resource.title}`;
+      pageImage.classList.add("is-entering", direction === "forward" ? "is-forward" : "is-backward");
+      pageLabel.textContent = `Pagina ${currentPage} di ${resource.pageCount}`;
+      previousButton.disabled = currentPage === 1;
+      nextButton.disabled = currentPage === resource.pageCount;
+    };
+
+    previousButton.addEventListener("click", () => goToPage(currentPage - 1, "backward"));
+    nextButton.addEventListener("click", () => goToPage(currentPage + 1, "forward"));
+
+    return element("section", {
+      className: "guide-viewer",
+      "aria-label": `Visualizzatore della presentazione ${resource.title}`
+    }, [
+      element("div", { className: "guide-page-viewport" }, pageImage),
+      element("div", { className: "guide-controls" }, [previousButton, pageLabel, nextButton]),
+      element("p", {
+        className: "guide-viewer-note",
+        text: "Usa i comandi per scorrere le pagine della guida direttamente nella piattaforma."
+      })
+    ]);
+  };
+
+  const resourceView = (resource, module = moduleOne) => {
+    const moduleResources = module.resources;
+    const currentIndex = moduleResources.findIndex((item) => item.id === resource.id);
+    const previous = moduleResources[currentIndex - 1];
+    const next = moduleResources[currentIndex + 1];
+    const shortLabel = resource.type === "pdf-guide"
+      ? "Presentazione guida"
+      : resource.id === "flipbook"
+        ? "Flipbook"
+        : `Parte ${resource.order}`;
 
     const mediaViewport = element("div", {
-        className: isVideoResource(resource) ? "video-frame" : "flipbook-frame"
-      }, iframeFor(resource));
+      className: resource.type === "pdf-guide"
+        ? "guide-frame"
+        : isVideoResource(resource) ? "video-frame" : "flipbook-frame"
+    }, resource.type === "pdf-guide" ? guideViewer(resource) : iframeFor(resource));
     const frame = element("div", { className: "media-frame-shell" }, [
       mediaViewport,
-      element("div", { className: "media-toolbar" }, [
+      resource.type === "pdf-guide"
+        ? null
+        : element("div", { className: "media-toolbar" }, [
         element("p", {
           text: "Se il contenuto non parte, prova a ricaricare questa risorsa."
         }),
@@ -468,13 +539,13 @@
       "aria-label": "Navigazione tra le risorse"
     }, [
       previous
-        ? element("a", { className: "nav-resource", href: resourceHref(previous) }, [
+        ? element("a", { className: "nav-resource", href: resourceHref(previous, module) }, [
             element("small", { text: "Precedente" }),
             element("strong", { text: previous.title })
           ])
         : element("span", { className: "nav-resource placeholder", "aria-hidden": "true" }),
       next
-        ? element("a", { className: "nav-resource", href: resourceHref(next) }, [
+        ? element("a", { className: "nav-resource", href: resourceHref(next, module) }, [
             element("small", { text: "Successivo" }),
             element("strong", { text: next.title })
           ])
@@ -486,7 +557,7 @@
         breadcrumb([
           { label: "Home", href: "#/" },
           { label: "Capitolo 1", href: "#/capitolo/1" },
-          { label: "Modulo 1", href: "#/capitolo/1/modulo/1" },
+          { label: module.title, href: `#/capitolo/1/modulo/${module.number}` },
           { label: shortLabel }
         ]),
         element("div", { className: "media-heading" }, [
@@ -504,7 +575,7 @@
         frame,
         resourceNav,
         element("div", { className: "button-row" }, [
-          buttonLink("Torna al Modulo 1", "#/capitolo/1/modulo/1", "secondary")
+          buttonLink(`Torna al ${module.title}`, `#/capitolo/1/modulo/${module.number}`, "secondary")
         ])
       ])
     ]));
@@ -707,16 +778,23 @@
 
     if (path === "/" || path === "/index") page = homeView();
     else if (path === "/capitolo/1") page = chapterOneView();
-    else if (path === "/capitolo/1/modulo/1") page = moduleView();
     else if (path === "/capitolo/2") page = comingSoonView(data.chapters[1]);
     else if (path === "/capitolo/3") page = comingSoonView(data.chapters[2]);
     else if (path === "/informazioni") page = informationView();
     else {
-      const resourceMatch = path.match(/^\/capitolo\/1\/modulo\/1\/(parte-[123]|flipbook)$/);
-      const resource = resourceMatch
-        ? resources.find((item) => item.id === resourceMatch[1])
+      const moduleMatch = path.match(/^\/capitolo\/1\/modulo\/(\d+)$/);
+      const resourceMatch = path.match(/^\/capitolo\/1\/modulo\/(\d+)\/([^/]+)$/);
+      const module = (moduleMatch || resourceMatch)
+        ? chapterOne.modules.find((item) => item.number === Number((moduleMatch || resourceMatch)[1]))
         : null;
-      page = resource ? resourceView(resource) : notFoundView();
+      const resource = resourceMatch && module
+        ? module.resources.find((item) => item.id === resourceMatch[2])
+        : null;
+      page = moduleMatch && module
+        ? moduleView(module)
+        : resource && module
+          ? resourceView(resource, module)
+          : notFoundView();
     }
 
     main.replaceChildren(page);

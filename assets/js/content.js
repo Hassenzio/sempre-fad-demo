@@ -78,16 +78,36 @@ window.courseData = Object.freeze({
           id: "modulo-2",
           number: 2,
           title: "Modulo 2",
-          subtitle: "Salute orale e visita in centro",
-          description: "Presentazione, documentazione della visita presso l’Istituto Leonarda Vaccari di Roma e intervista di approfondimento.",
-          status: "coming-soon",
-          statusLabel: "Contenuti in preparazione",
+          subtitle: "Salute orale e prevenzione evidence-based",
+          description: "Le problematiche orali prevalenti e le strategie di prevenzione evidence-based nei pazienti con Disturbo dello Spettro Autistico, con attenzione al ruolo dell’igienista dentale, della famiglia e del team multidisciplinare.",
+          status: "available",
+          statusLabel: "Disponibile in demo",
           sourceItems: [
-            "Presentazione del modulo",
-            "Quattro contributi video dalla visita in centro",
-            "Intervista di approfondimento"
+            "Presentazione guida: condizioni cliniche e prevenzione evidence-based",
+            "Flipbook di approfondimento"
           ],
-          resources: []
+          resources: [
+            {
+              id: "presentazione-guida",
+              order: 1,
+              type: "pdf-guide",
+              category: "Presentazione guida",
+              title: "Problematiche orali e prevenzione evidence-based",
+              description: "Guida visiva in 24 pagine sulle condizioni cliniche orali nei pazienti con ASD: carie, bruxismo, erosione dentale, alterazioni salivari, malattie parodontali e strategie preventive personalizzate.",
+              pageCount: 24,
+              pagePath: "assets/module-2-guide/page-{page}.jpg"
+            },
+            {
+              id: "flipbook",
+              order: 2,
+              type: "heyzine",
+              category: "Materiale di approfondimento",
+              title: "Flipbook — Salute orale e prevenzione",
+              description: "Materiale sfogliabile di approfondimento collegato al Modulo 2, consultabile direttamente nel percorso formativo.",
+              iframeTitle: "Flipbook Capitolo 1 Modulo 2",
+              embedUrl: "https://heyzine.com/flip-book/4cf4337c85.html"
+            }
+          ]
         },
         {
           id: "modulo-3",
