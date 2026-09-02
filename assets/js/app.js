@@ -231,42 +231,7 @@
       ])
     ]);
 
-    const chapterStages = data.chapters.map((chapter) => {
-      const active = chapter.number === 1;
-      return element("a", {
-        className: `home-chapter-stage${active ? " is-active" : ""}`,
-        href: `#/capitolo/${chapter.number}`,
-        "aria-label": `${chapter.title}: ${chapter.statusLabel}`
-      }, [
-        element("span", {
-          className: "home-chapter-number",
-          text: String(chapter.number).padStart(2, "0"),
-          "aria-hidden": "true"
-        }),
-        element("span", { className: "home-chapter-copy" }, [
-          element("span", { className: "home-chapter-title", text: chapter.title }),
-          element("span", { className: "home-chapter-status", text: chapter.statusLabel }),
-          active
-            ? element("span", { className: "home-chapter-cta", text: "Esplora il capitolo →" })
-            : null
-        ])
-      ]);
-    });
-
-    const chapters = section("home-chapters", [
-      element("div", { className: "home-section-shell" }, [
-        element("div", { className: "home-chapters-heading" }, [
-          element("p", { className: "home-eyebrow", text: "IL PERCORSO" }),
-          element("h2", { text: "Tre capitoli, una direzione condivisa." })
-        ]),
-        element("nav", { className: "home-chapter-map", "aria-label": "Mappa dei capitoli" }, [
-          element("span", { className: "home-chapter-line", "aria-hidden": "true" }),
-          ...chapterStages
-        ])
-      ])
-    ]);
-
-    return view(hero, modules, chapters);
+    return view(hero, modules);
   };
 
   const chapterOneView = () => {
@@ -450,21 +415,23 @@
 
   const guideViewer = (resource) => {
     let currentPage = 1;
+    let currentImage = new Image();
+    let isTransitioning = false;
     const pageSource = (page) => resource.pagePath.replace("{page}", String(page).padStart(2, "0"));
-    const pageImage = element("img", {
-      className: "guide-page-image guide-page-current",
-      src: pageSource(currentPage),
-      alt: `Pagina ${currentPage} di ${resource.pageCount}: ${resource.title}`,
+    const canvas = element("canvas", {
+      className: "guide-page-canvas",
       width: "1280",
-      height: "720"
+      height: "720",
+      role: "img",
+      "aria-label": `Pagina ${currentPage} di ${resource.pageCount}: ${resource.title}`,
+      text: "La guida richiede un browser con supporto canvas."
     });
-    const incomingImage = element("img", {
-      className: "guide-page-image guide-page-incoming",
-      alt: "",
-      "aria-hidden": "true",
-      width: "1280",
-      height: "720"
-    });
+    const context = canvas.getContext("2d");
+    const drawPage = (image) => {
+      context.fillStyle = "#111b22";
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    };
     const pageLabel = element("p", {
       className: "guide-page-status",
       text: `Pagina ${currentPage} di ${resource.pageCount}`,
@@ -485,51 +452,65 @@
       "aria-label": "Pagina successiva",
       title: "Pagina successiva"
     });
-
+    const updateControls = () => {
+      previousButton.disabled = isTransitioning || currentPage === 1;
+      nextButton.disabled = isTransitioning || currentPage === resource.pageCount;
+    };
+    const finish = (image, page) => {
+      currentImage = image;
+      currentPage = page;
+      canvas.setAttribute("aria-label", `Pagina ${currentPage} di ${resource.pageCount}: ${resource.title}`);
+      pageLabel.textContent = `Pagina ${currentPage} di ${resource.pageCount}`;
+      isTransitioning = false;
+      drawPage(currentImage);
+      updateControls();
+    };
     const goToPage = (page, direction) => {
-      if (page < 1 || page > resource.pageCount || page === currentPage) return;
-      previousButton.disabled = true;
-      nextButton.disabled = true;
-      const preload = new Image();
-      preload.onload = () => {
-        incomingImage.src = preload.src;
-        incomingImage.className = `guide-page-image guide-page-incoming is-${direction}`;
-        pageImage.className = `guide-page-image guide-page-current is-leaving is-${direction}`;
-        requestAnimationFrame(() => incomingImage.classList.add("is-active"));
-        const finishTransition = (event) => {
-          if (event.propertyName !== "opacity") return;
-          incomingImage.removeEventListener("transitionend", finishTransition);
-          currentPage = page;
-          pageImage.src = incomingImage.src;
-          pageImage.alt = `Pagina ${currentPage} di ${resource.pageCount}: ${resource.title}`;
-          pageImage.className = "guide-page-image guide-page-current";
-          incomingImage.removeAttribute("src");
-          incomingImage.className = "guide-page-image guide-page-incoming";
-          pageLabel.textContent = `Pagina ${currentPage} di ${resource.pageCount}`;
-          previousButton.disabled = currentPage === 1;
-          nextButton.disabled = currentPage === resource.pageCount;
-        };
-        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-          requestAnimationFrame(() => finishTransition({ propertyName: "opacity" }));
-        } else {
-          incomingImage.addEventListener("transitionend", finishTransition);
+      if (isTransitioning || page < 1 || page > resource.pageCount || page === currentPage) return;
+      isTransitioning = true;
+      updateControls();
+      const nextImage = new Image();
+      nextImage.onload = () => {
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (reducedMotion) {
+          finish(nextImage, page);
+          return;
         }
+        const startedAt = performance.now();
+        const duration = 460;
+        const distance = 18 * direction;
+        const animate = (now) => {
+          const progress = Math.min((now - startedAt) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          context.fillStyle = "#111b22";
+          context.fillRect(0, 0, canvas.width, canvas.height);
+          context.globalAlpha = 1 - eased;
+          context.drawImage(currentImage, -distance * eased, 0, canvas.width, canvas.height);
+          context.globalAlpha = eased;
+          context.drawImage(nextImage, distance * (1 - eased), 0, canvas.width, canvas.height);
+          context.globalAlpha = 1;
+          if (progress < 1) requestAnimationFrame(animate);
+          else finish(nextImage, page);
+        };
+        requestAnimationFrame(animate);
       };
-      preload.onerror = () => {
-        previousButton.disabled = currentPage === 1;
-        nextButton.disabled = currentPage === resource.pageCount;
+      nextImage.onerror = () => {
+        isTransitioning = false;
+        updateControls();
       };
-      preload.src = pageSource(page);
+      nextImage.src = pageSource(page);
     };
 
-    previousButton.addEventListener("click", () => goToPage(currentPage - 1, "backward"));
-    nextButton.addEventListener("click", () => goToPage(currentPage + 1, "forward"));
+    currentImage.onload = () => drawPage(currentImage);
+    currentImage.src = pageSource(currentPage);
+    previousButton.addEventListener("click", () => goToPage(currentPage - 1, -1));
+    nextButton.addEventListener("click", () => goToPage(currentPage + 1, 1));
 
     return element("section", {
       className: "guide-viewer",
       "aria-label": `Visualizzatore della presentazione ${resource.title}`
     }, [
-      element("div", { className: "guide-page-viewport" }, [pageImage, incomingImage, previousButton, nextButton]),
+      element("div", { className: "guide-page-viewport" }, [canvas, previousButton, nextButton]),
       element("div", { className: "guide-controls" }, pageLabel),
       element("p", {
         className: "guide-viewer-note",
