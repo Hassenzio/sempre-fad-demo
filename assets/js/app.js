@@ -126,12 +126,8 @@
   };
 
   const homeView = () => {
-    const homepageModules = resources.map((resource, index) => ({
-      number: index + 1,
-      label: `Modulo ${index + 1}`,
-      resource
-    }));
-    const homepageIcons = ["dialogue", "dialogue", "bridge", "pages"];
+    const homepageModules = chapterOne.modules;
+    const homepageIcons = ["dialogue", "pages", "growth"];
 
     const hero = section("home-hero", [
       element("div", { className: "home-hero-inner" }, [
@@ -179,30 +175,41 @@
       ])
     ]);
 
-    const moduleCards = homepageModules.map(({ number, label, resource }, index) =>
-      element("a", {
-        className: `home-module-card home-module-card-${number}`,
-        href: resourceHref(resource),
-        "aria-label": `${label}: ${resource.title}. Apri il modulo`
-      }, [
+    const moduleCards = homepageModules.map((module, index) => {
+      const available = module.status === "available";
+      const resourceCount = module.resources.length;
+      const cardTag = available ? "a" : "article";
+      const cardAttributes = {
+        className: `home-module-card home-module-card-${module.number}${available ? " is-available" : " is-coming"}`,
+        "aria-label": available
+          ? `${module.title}: ${module.subtitle}. Apri il modulo`
+          : `${module.title}: ${module.statusLabel}`
+      };
+      if (available) cardAttributes.href = `#/capitolo/1/modulo/${module.number}`;
+
+      return element(cardTag, cardAttributes, [
         element("div", { className: "home-module-card-top" }, [
           element("span", {
             className: "home-module-number",
-            text: `MODULO ${String(number).padStart(2, "0")}`
+            text: `MODULO ${String(module.number).padStart(2, "0")}`
           }),
           icon(homepageIcons[index], "home-module-icon")
         ]),
-        element("p", { className: "home-module-category", text: resource.category }),
-        element("h3", { text: resource.title }),
+        element("p", { className: "home-module-category", text: available ? `${resourceCount} contenuti disponibili` : module.statusLabel }),
+        element("h3", { text: module.subtitle }),
+        element("p", { className: "home-module-summary", text: module.description }),
         element("span", { className: "home-module-chalk", "aria-hidden": "true" }),
         element("div", { className: "home-module-card-bottom" }, [
-          element("span", { className: "home-module-status", text: "Disponibile" }),
-          element("span", { className: "home-module-cta" }, [
-            element("span", { text: "Apri il modulo" }),
-            element("span", { className: "home-link-arrow", text: "→", "aria-hidden": "true" })
-          ])
+          element("span", { className: "home-module-status", text: available ? "Disponibile" : "In preparazione" }),
+          available
+            ? element("span", { className: "home-module-cta" }, [
+                element("span", { text: "Apri il modulo" }),
+                element("span", { className: "home-link-arrow", text: "→", "aria-hidden": "true" })
+              ])
+            : element("span", { className: "home-module-cta", text: "Prossimamente" })
         ])
-      ]));
+      ]);
+    });
 
     const modules = section("home-modules", [
       element("div", { id: "capitolo-1-moduli", className: "home-section-shell" }, [
@@ -212,13 +219,13 @@
             element("h2", { text: "Moduli disponibili" })
           ]),
           element("p", {
-            text: "Accedi direttamente ai quattro contenuti disponibili nella versione dimostrativa."
+            text: "Scegli un modulo per orientarti nel percorso e accedere ai contenuti già disponibili nella demo."
           })
         ]),
         element("div", {
           className: "home-module-rail",
           role: "list",
-          "aria-label": "Contenuti disponibili del Capitolo 1",
+          "aria-label": "Moduli del Capitolo 1",
           tabindex: "0"
         }, moduleCards.map((card) => element("div", { className: "home-module-item", role: "listitem" }, card)))
       ])
@@ -445,9 +452,16 @@
     let currentPage = 1;
     const pageSource = (page) => resource.pagePath.replace("{page}", String(page).padStart(2, "0"));
     const pageImage = element("img", {
-      className: "guide-page-image",
+      className: "guide-page-image guide-page-current",
       src: pageSource(currentPage),
       alt: `Pagina ${currentPage} di ${resource.pageCount}: ${resource.title}`,
+      width: "1280",
+      height: "720"
+    });
+    const incomingImage = element("img", {
+      className: "guide-page-image guide-page-incoming",
+      alt: "",
+      "aria-hidden": "true",
       width: "1280",
       height: "720"
     });
@@ -457,28 +471,55 @@
       "aria-live": "polite"
     });
     const previousButton = element("button", {
-      className: "guide-control",
+      className: "guide-control guide-control-icon guide-control-previous",
       type: "button",
-      text: "Pagina precedente",
+      text: "←",
+      "aria-label": "Pagina precedente",
+      title: "Pagina precedente",
       disabled: true
     });
     const nextButton = element("button", {
-      className: "guide-control",
+      className: "guide-control guide-control-icon guide-control-next",
       type: "button",
-      text: "Pagina successiva"
+      text: "→",
+      "aria-label": "Pagina successiva",
+      title: "Pagina successiva"
     });
 
     const goToPage = (page, direction) => {
       if (page < 1 || page > resource.pageCount || page === currentPage) return;
-      currentPage = page;
-      pageImage.classList.remove("is-entering", "is-forward", "is-backward");
-      void pageImage.offsetWidth;
-      pageImage.src = pageSource(currentPage);
-      pageImage.alt = `Pagina ${currentPage} di ${resource.pageCount}: ${resource.title}`;
-      pageImage.classList.add("is-entering", direction === "forward" ? "is-forward" : "is-backward");
-      pageLabel.textContent = `Pagina ${currentPage} di ${resource.pageCount}`;
-      previousButton.disabled = currentPage === 1;
-      nextButton.disabled = currentPage === resource.pageCount;
+      previousButton.disabled = true;
+      nextButton.disabled = true;
+      const preload = new Image();
+      preload.onload = () => {
+        incomingImage.src = preload.src;
+        incomingImage.className = `guide-page-image guide-page-incoming is-${direction}`;
+        pageImage.className = `guide-page-image guide-page-current is-leaving is-${direction}`;
+        requestAnimationFrame(() => incomingImage.classList.add("is-active"));
+        const finishTransition = (event) => {
+          if (event.propertyName !== "opacity") return;
+          incomingImage.removeEventListener("transitionend", finishTransition);
+          currentPage = page;
+          pageImage.src = incomingImage.src;
+          pageImage.alt = `Pagina ${currentPage} di ${resource.pageCount}: ${resource.title}`;
+          pageImage.className = "guide-page-image guide-page-current";
+          incomingImage.removeAttribute("src");
+          incomingImage.className = "guide-page-image guide-page-incoming";
+          pageLabel.textContent = `Pagina ${currentPage} di ${resource.pageCount}`;
+          previousButton.disabled = currentPage === 1;
+          nextButton.disabled = currentPage === resource.pageCount;
+        };
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          requestAnimationFrame(() => finishTransition({ propertyName: "opacity" }));
+        } else {
+          incomingImage.addEventListener("transitionend", finishTransition);
+        }
+      };
+      preload.onerror = () => {
+        previousButton.disabled = currentPage === 1;
+        nextButton.disabled = currentPage === resource.pageCount;
+      };
+      preload.src = pageSource(page);
     };
 
     previousButton.addEventListener("click", () => goToPage(currentPage - 1, "backward"));
@@ -488,11 +529,11 @@
       className: "guide-viewer",
       "aria-label": `Visualizzatore della presentazione ${resource.title}`
     }, [
-      element("div", { className: "guide-page-viewport" }, pageImage),
-      element("div", { className: "guide-controls" }, [previousButton, pageLabel, nextButton]),
+      element("div", { className: "guide-page-viewport" }, [pageImage, incomingImage, previousButton, nextButton]),
+      element("div", { className: "guide-controls" }, pageLabel),
       element("p", {
         className: "guide-viewer-note",
-        text: "Usa i comandi per scorrere le pagine della guida direttamente nella piattaforma."
+        text: "Guida interna · usa le frecce per sfogliare le pagine."
       })
     ]);
   };
