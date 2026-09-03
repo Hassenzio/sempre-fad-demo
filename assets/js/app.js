@@ -834,8 +834,16 @@
 
   const updateNavigation = (path) => {
     document.querySelectorAll("[data-nav]").forEach((link) => {
-      const isInfo = link.dataset.nav === "informazioni";
-      const active = isInfo ? path === "/informazioni" : path !== "/informazioni";
+      const target = link.dataset.nav;
+      const active = target === "percorso"
+        ? path === "/" || path === "/index"
+        : target === "capitolo-1"
+          ? path === "/capitolo/1" || path.startsWith("/capitolo/1/modulo/")
+          : target === "capitolo-2"
+            ? path === "/capitolo/2"
+            : target === "capitolo-3"
+              ? path === "/capitolo/3"
+              : path === "/informazioni";
       if (active) link.setAttribute("aria-current", "page");
       else link.removeAttribute("aria-current");
     });

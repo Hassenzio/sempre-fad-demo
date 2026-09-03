@@ -1849,6 +1849,44 @@ h1[tabindex="-1"]:focus {
   }
 }
 
+@media (min-width: 701px) and (max-width: 900px) {
+  .site-header {
+    background: rgb(17 27 34 / 92%);
+    backdrop-filter: blur(18px);
+  }
+
+  .menu-toggle {
+    display: inline-flex;
+  }
+
+  .primary-navigation {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: var(--gutter);
+    left: var(--gutter);
+    display: none;
+    align-items: stretch;
+    padding: 0.75rem;
+    border: 1px solid rgb(255 255 255 / 12%);
+    border-radius: 1.2rem;
+    background: #17242df7;
+    box-shadow: var(--shadow);
+  }
+
+  .primary-navigation.is-open {
+    display: grid;
+  }
+
+  .primary-navigation a,
+  .demo-badge {
+    padding: 0.8rem 0.9rem;
+  }
+
+  .demo-badge {
+    margin-top: 0.4rem;
+  }
+}
+
 @media (max-width: 700px) {
   .site-header {
     background: rgb(17 27 34 / 92%);
