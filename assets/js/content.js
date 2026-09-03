@@ -60,7 +60,7 @@ window.courseData = Object.freeze({
               title: "Videolezione — Parte 3",
               description: "Terza parte della discussione sulle slide del Modulo 1.",
               iframeTitle: "C1 M1 P3",
-              embedUrl: "https://www.youtube-nocookie.com/embed/URTx20M02F0?rel=0&playsinline=1"
+              embedUrl: "https://www.youtube-nocookie.com/embed/DeuGVscxP_Q?rel=0&playsinline=1"
             },
             {
               id: "flipbook",
