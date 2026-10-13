@@ -185,6 +185,76 @@ button {
   transform-origin: left;
 }
 
+.chapter-menu {
+  position: relative;
+}
+
+.chapter-menu > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  padding: 0.55rem 0;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.93rem;
+  font-weight: 720;
+  list-style: none;
+}
+
+.chapter-menu > summary::-webkit-details-marker {
+  display: none;
+}
+
+.chapter-menu > summary::after {
+  width: 0.42rem;
+  height: 0.42rem;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  content: "";
+  transform: translateY(-0.12rem) rotate(45deg);
+  transition: transform 180ms ease;
+}
+
+.chapter-menu[open] > summary,
+.chapter-menu > summary:hover {
+  color: var(--warm-white);
+}
+
+.chapter-menu[open] > summary::after {
+  transform: translateY(0.12rem) rotate(225deg);
+}
+
+.chapter-menu-panel {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 0.5rem);
+  left: 50%;
+  display: grid;
+  width: max-content;
+  min-width: 10.75rem;
+  padding: 0.45rem;
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 0.9rem;
+  background: #17242df7;
+  box-shadow: var(--shadow);
+  transform: translateX(-50%);
+}
+
+.chapter-menu-panel a {
+  padding: 0.58rem 0.7rem;
+  border-radius: 0.55rem;
+  font-size: 0.82rem;
+}
+
+.chapter-menu-panel a::after {
+  display: none;
+}
+
+.chapter-menu-panel a:hover,
+.chapter-menu-panel a[aria-current="page"] {
+  background: rgb(255 255 255 / 8%);
+}
+
 .demo-badge,
 .status-pill,
 .resource-kind,
@@ -1846,6 +1916,23 @@ h1[tabindex="-1"]:focus {
 
   .module-copy {
     position: static;
+  }
+
+  .chapter-menu {
+    width: 100%;
+  }
+
+  .chapter-menu > summary {
+    width: 100%;
+    justify-content: space-between;
+    padding: 0.8rem 0.9rem;
+  }
+
+  .chapter-menu-panel {
+    position: static;
+    width: auto;
+    margin: 0 0.9rem 0.55rem;
+    transform: none;
   }
 }
 

@@ -93,8 +93,8 @@ window.courseData = Object.freeze({
               type: "pdf-guide",
               category: "Presentazione guida",
               title: "Problematiche orali e prevenzione evidence-based",
-              description: "Guida visiva in 24 pagine sulle condizioni cliniche orali nei pazienti con ASD: carie, bruxismo, erosione dentale, alterazioni salivari, malattie parodontali e strategie preventive personalizzate.",
-              pageCount: 24,
+              description: "Guida visiva in 26 pagine sulle condizioni cliniche orali nei pazienti con ASD: carie, bruxismo, erosione dentale, alterazioni salivari, malattie parodontali e strategie preventive personalizzate.",
+              pageCount: 26,
               pagePath: "assets/module-2-guide/page-{page}.jpg"
             },
             {
@@ -115,14 +115,23 @@ window.courseData = Object.freeze({
           title: "Modulo 3",
           subtitle: "Pillole e testimonianze",
           description: "Presentazione, contenuti brevi e testimonianze raccolte attraverso interviste.",
-          status: "coming-soon",
-          statusLabel: "Contenuti in preparazione",
+          status: "available",
+          statusLabel: "Disponibile in demo",
           sourceItems: [
-            "Presentazione del modulo",
-            "Video pillole",
-            "Interviste e testimonianze"
+            "Flipbook di approfondimento"
           ],
-          resources: []
+          resources: [
+            {
+              id: "flipbook",
+              order: 1,
+              type: "heyzine",
+              category: "Materiale di approfondimento",
+              title: "Flipbook — Pillole e testimonianze",
+              description: "Materiale sfogliabile del Modulo 3, consultabile direttamente nel percorso formativo.",
+              iframeTitle: "Flipbook Capitolo 1 Modulo 3",
+              embedUrl: "https://heyzine.com/flip-book/43d79e0d7c.html"
+            }
+          ]
         }
       ]
     },

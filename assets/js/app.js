@@ -695,6 +695,31 @@
     return view(intro, outline);
   };
 
+  const comingSoonModuleView = (chapter, module) => view(section("page-hero", [
+    element("div", { className: "section-shell compact" }, [
+      breadcrumb([
+        { label: "Home", href: "#/" },
+        { label: chapter.title, href: `#/capitolo/${chapter.number}` },
+        { label: module.title }
+      ]),
+      eyebrow(module.statusLabel),
+      element("h1", { className: "page-title", text: module.title }),
+      element("p", { className: "module-page-subtitle", text: module.subtitle }),
+      element("p", { className: "page-intro", text: module.description }),
+      element("p", {
+        className: "availability-note",
+        text: "I contenuti di questo modulo non sono inclusi nella versione dimostrativa."
+      }),
+      module.sourceItems
+        ? element("ul", { className: "source-items" },
+            module.sourceItems.map((item) => element("li", { text: item })))
+        : null,
+      element("div", { className: "button-row" }, [
+        buttonLink(`Torna al ${chapter.title}`, `#/capitolo/${chapter.number}`, "secondary")
+      ])
+    ])
+  ]));
+
   const informationView = () => {
     const list = element("ul", { className: "acronym-list" },
       data.acronym.map((word) =>
@@ -804,16 +829,23 @@
     else if (path === "/capitolo/3") page = comingSoonView(data.chapters[2]);
     else if (path === "/informazioni") page = informationView();
     else {
-      const moduleMatch = path.match(/^\/capitolo\/1\/modulo\/(\d+)$/);
+      const moduleMatch = path.match(/^\/capitolo\/([123])\/modulo\/(\d+)$/);
       const resourceMatch = path.match(/^\/capitolo\/1\/modulo\/(\d+)\/([^/]+)$/);
-      const module = (moduleMatch || resourceMatch)
-        ? chapterOne.modules.find((item) => item.number === Number((moduleMatch || resourceMatch)[1]))
-        : null;
+      const activeChapter = moduleMatch
+        ? data.chapters.find((chapter) => chapter.number === Number(moduleMatch[1]))
+        : chapterOne;
+      const module = moduleMatch
+        ? activeChapter?.modules.find((item) => item.number === Number(moduleMatch[2]))
+        : resourceMatch
+          ? chapterOne.modules.find((item) => item.number === Number(resourceMatch[1]))
+          : null;
       const resource = resourceMatch && module
         ? module.resources.find((item) => item.id === resourceMatch[2])
         : null;
       page = moduleMatch && module
-        ? moduleView(module)
+        ? module.status === "available"
+          ? moduleView(module)
+          : comingSoonModuleView(activeChapter, module)
         : resource && module
           ? resourceView(resource, module)
           : notFoundView();
@@ -840,9 +872,9 @@
         : target === "capitolo-1"
           ? path === "/capitolo/1" || path.startsWith("/capitolo/1/modulo/")
           : target === "capitolo-2"
-            ? path === "/capitolo/2"
+          ? path === "/capitolo/2" || path.startsWith("/capitolo/2/modulo/")
             : target === "capitolo-3"
-              ? path === "/capitolo/3"
+              ? path === "/capitolo/3" || path.startsWith("/capitolo/3/modulo/")
               : path === "/informazioni";
       if (active) link.setAttribute("aria-current", "page");
       else link.removeAttribute("aria-current");
@@ -852,6 +884,7 @@
   const closeMenu = () => {
     navigation.classList.remove("is-open");
     menuButton.setAttribute("aria-expanded", "false");
+    navigation.querySelectorAll("details[open]").forEach((menu) => menu.removeAttribute("open"));
   };
 
   menuButton.addEventListener("click", () => {
