@@ -195,7 +195,7 @@
           }),
           icon(homepageIcons[index], "home-module-icon")
         ]),
-        element("p", { className: "home-module-category", text: available ? `${resourceCount} contenuti disponibili` : module.statusLabel }),
+        element("p", { className: "home-module-category", text: available ? `${resourceCount} ${resourceCount === 1 ? "contenuto disponibile" : "contenuti disponibili"}` : module.statusLabel }),
         element("h3", { text: module.subtitle }),
         element("p", { className: "home-module-summary", text: module.description }),
         element("span", { className: "home-module-chalk", "aria-hidden": "true" }),
@@ -270,11 +270,11 @@
           }, [
             element("p", { className: "micro-label", text: "ACCESSO DIRETTO" }),
             element("h2", { text: "Scegli un contenuto" }),
-            element("nav", { "aria-label": "Contenuti del Modulo 1" },
-              resources.map((resource) =>
+            element("nav", { "aria-label": "Contenuti disponibili del Capitolo 1" },
+              chapterOne.modules.flatMap((module) => module.resources.map((resource) =>
                 element("a", {
                   className: "quick-resource",
-                  href: resourceHref(resource)
+                  href: resourceHref(resource, module)
                 }, [
                   element("span", {
                     className: "quick-resource-number",
@@ -282,10 +282,10 @@
                     "aria-hidden": "true"
                   }),
                   element("span", {}, [
-                    element("small", { text: resource.category }),
+                    element("small", { text: `${module.title} · ${resource.category}` }),
                     element("strong", { text: resource.title })
                   ])
-                ])))
+                ]))))
           ])
         ])
       ])
@@ -884,8 +884,60 @@
   const closeMenu = () => {
     navigation.classList.remove("is-open");
     menuButton.setAttribute("aria-expanded", "false");
-    navigation.querySelectorAll("details[open]").forEach((menu) => menu.removeAttribute("open"));
+    closeChapterMenus();
   };
+
+  const closeChapterMenus = (except = null) => {
+    navigation.querySelectorAll(".chapter-menu").forEach((menu) => {
+      if (menu === except) return;
+      menu.querySelector("button").setAttribute("aria-expanded", "false");
+      menu.querySelector(".chapter-menu-panel").hidden = true;
+    });
+  };
+
+  navigation.querySelectorAll(".chapter-menu").forEach((menu) => {
+    const chapter = data.chapters.find((item) => item.number === Number(menu.dataset.chapter));
+    const toggle = menu.querySelector("button");
+    const panel = menu.querySelector(".chapter-menu-panel");
+    panel.replaceChildren(
+      element("a", {
+        className: "chapter-overview-link",
+        href: `#/capitolo/${chapter.number}`,
+        "data-nav": chapter.id
+      }, [
+        element("span", { text: "Panoramica del capitolo" }),
+        element("span", { text: "↗", "aria-hidden": "true" })
+      ]),
+      ...chapter.modules.map((module) => element("a", {
+        className: "chapter-module-link",
+        href: `#/capitolo/${chapter.number}/modulo/${module.number}`
+      }, [
+        element("span", { className: "chapter-module-number", text: String(module.number).padStart(2, "0") }),
+        element("span", { className: "chapter-module-copy" }, [
+          element("strong", { text: module.subtitle }),
+          element("small", {
+            className: module.status === "available" ? "is-available" : "",
+            text: `${module.title} · ${module.status === "available" ? "Disponibile" : "In preparazione"}`
+          })
+        ]),
+        element("span", { className: "chapter-module-arrow", text: "→", "aria-hidden": "true" })
+      ]))
+    );
+    toggle.addEventListener("click", () => {
+      const open = toggle.getAttribute("aria-expanded") !== "true";
+      closeChapterMenus(menu);
+      toggle.setAttribute("aria-expanded", String(open));
+      panel.hidden = !open;
+    });
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!event.target.closest(".chapter-menu")) closeChapterMenus();
+  });
+
+  navigation.addEventListener("focusout", (event) => {
+    if (!navigation.contains(event.relatedTarget)) closeChapterMenus();
+  });
 
   menuButton.addEventListener("click", () => {
     const open = menuButton.getAttribute("aria-expanded") === "true";
@@ -894,6 +946,14 @@
   });
 
   document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      const openToggle = navigation.querySelector('.chapter-menu-toggle[aria-expanded="true"]');
+      if (openToggle) {
+        closeChapterMenus();
+        openToggle.focus();
+        return;
+      }
+    }
     if (event.key === "Escape" && navigation.classList.contains("is-open")) {
       closeMenu();
       menuButton.focus();

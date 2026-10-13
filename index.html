@@ -8,9 +8,9 @@
     <meta name="theme-color" content="#17242d">
     <title>S.E.M.P.R.E. — Percorso di Formazione Umana e Professionale</title>
     <link rel="icon" href="assets/brand/sempre-character.png" type="image/png">
-    <link rel="stylesheet" href="assets/css/styles.css">
-    <script src="assets/js/content.js" defer></script>
-    <script src="assets/js/app.js" defer></script>
+    <link rel="stylesheet" href="assets/css/styles.css?v=20261013-navigation-2">
+    <script src="assets/js/content.js?v=20261013-navigation-2" defer></script>
+    <script src="assets/js/app.js?v=20261013-navigation-2" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main-content">Vai al contenuto principale</a>
@@ -25,31 +25,31 @@
         </button>
         <nav id="primary-navigation" class="primary-navigation" aria-label="Navigazione principale">
           <a href="#/" data-nav="percorso">Percorso</a>
-          <details class="chapter-menu">
-            <summary>Capitolo 1</summary>
-            <div class="chapter-menu-panel">
+          <div class="chapter-menu" data-chapter="1">
+            <button class="chapter-menu-toggle" type="button" aria-expanded="false" aria-controls="chapter-panel-1">Capitolo 1</button>
+            <div class="chapter-menu-panel" id="chapter-panel-1" hidden>
               <a href="#/capitolo/1" data-nav="capitolo-1">Panoramica</a>
               <a href="#/capitolo/1/modulo/1">Modulo 1</a>
               <a href="#/capitolo/1/modulo/2">Modulo 2</a>
               <a href="#/capitolo/1/modulo/3">Modulo 3</a>
             </div>
-          </details>
-          <details class="chapter-menu">
-            <summary>Capitolo 2</summary>
-            <div class="chapter-menu-panel">
+          </div>
+          <div class="chapter-menu" data-chapter="2">
+            <button class="chapter-menu-toggle" type="button" aria-expanded="false" aria-controls="chapter-panel-2">Capitolo 2</button>
+            <div class="chapter-menu-panel" id="chapter-panel-2" hidden>
               <a href="#/capitolo/2" data-nav="capitolo-2">Panoramica</a>
               <a href="#/capitolo/2/modulo/1">Modulo 1</a>
               <a href="#/capitolo/2/modulo/2">Modulo 2</a>
               <a href="#/capitolo/2/modulo/3">Modulo 3</a>
             </div>
-          </details>
-          <details class="chapter-menu">
-            <summary>Capitolo 3</summary>
-            <div class="chapter-menu-panel">
+          </div>
+          <div class="chapter-menu" data-chapter="3">
+            <button class="chapter-menu-toggle" type="button" aria-expanded="false" aria-controls="chapter-panel-3">Capitolo 3</button>
+            <div class="chapter-menu-panel" id="chapter-panel-3" hidden>
               <a href="#/capitolo/3" data-nav="capitolo-3">Panoramica</a>
               <a href="#/capitolo/3/modulo/1">Modulo 1</a>
             </div>
-          </details>
+          </div>
           <a href="#/informazioni" data-nav="informazioni">Informazioni</a>
           <span class="demo-badge">Demo</span>
         </nav>
