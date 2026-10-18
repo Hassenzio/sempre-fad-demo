@@ -376,7 +376,7 @@
 
     const list = section("", [
       element("div", { className: "section-shell" }, [
-        element("div", { className: "module-resource-grid" }, cards)
+        element("div", { className: `module-resource-grid${module.number === 3 ? " module-three-resources" : ""}` }, cards)
       ])
     ]);
 
@@ -622,7 +622,7 @@
     const number = (value) => String(value).padStart(2, "0");
     const duration = (seconds) => `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
     const shortTitle = (video, group) => group.author
-      ? `Pillola ${number(video.order)}`
+      ? `Video Pillola ${number(video.order)}`
       : video.title.replace("Video Intervista ", "Intervista ");
     const poster = (video) => element("div", { className: "session-poster" }, [
       element("img", {
@@ -635,16 +635,15 @@
       className: `session-video-card${compact ? " is-compact" : ""}${selectedVideo?.id === video.id ? " is-selected" : ""}`,
       href: videoHref(video),
       "aria-current": selectedVideo?.id === video.id ? "page" : null,
-      "aria-label": `${number(video.order)} · ${video.title}${group.author ? ` · ${group.author}` : ""}. Guarda il video`
+      "aria-label": `${video.title}${group.author ? ` · ${group.author}` : ""}. Guarda il video`
     }, [
       poster(video),
       element("div", { className: "session-card-copy" }, [
-        element("div", { className: "session-card-meta" }, [
-          element("span", { text: `Video ${number(video.order)}` }),
-          element("span", { text: duration(video.duration) })
-        ]),
         element("h3", { text: shortTitle(video, group) }),
-        !compact ? element("p", { text: group.author || group.category }) : null
+        element("div", { className: "session-card-meta" }, [
+          !compact ? element("span", { text: group.author || group.category }) : null,
+          element("span", { text: duration(video.duration) })
+        ])
       ])
     ]);
 
@@ -679,7 +678,6 @@
           "aria-current": selectedVideo?.id === video.id ? "page" : null,
           "aria-label": video.title
         }, [
-          element("span", { text: number(video.order), "aria-hidden": "true" }),
           element("span", { text: shortTitle(video, group) }),
           element("small", { text: duration(video.duration) })
         ]))
@@ -726,7 +724,7 @@
           element("div", { className: "media-frame-shell" }, [
             frame,
             element("div", { className: "session-player-tools" }, [
-              element("span", { text: `Video ${number(selectedVideo.order)} di 09` }),
+              element("span", { text: selectedGroup.category }),
               element("button", {
                 type: "button", text: "Ricarica video",
                 onClick: () => {
@@ -738,11 +736,11 @@
           ]),
           element("nav", { className: "session-player-navigation", "aria-label": "Navigazione tra i nove video" }, [
             allVideos[currentIndex - 1]
-              ? element("a", { href: videoHref(allVideos[currentIndex - 1]), text: `← Video ${number(allVideos[currentIndex - 1].order)}` })
+              ? element("a", { href: videoHref(allVideos[currentIndex - 1]), text: `← ${allVideos[currentIndex - 1].title}` })
               : element("span"),
             element("a", { href: sectionHref(selectedGroup), text: "Torna alla sezione" }),
             allVideos[currentIndex + 1]
-              ? element("a", { href: videoHref(allVideos[currentIndex + 1]), text: `Video ${number(allVideos[currentIndex + 1].order)} →` })
+              ? element("a", { href: videoHref(allVideos[currentIndex + 1]), text: `${allVideos[currentIndex + 1].title} →` })
               : element("span")
           ])
         ]),
@@ -795,7 +793,7 @@
           { label: "Capitolo 1", href: "#/capitolo/1" },
           { label: module.title, href: `#/capitolo/1/modulo/${module.number}` },
           { label: "Sessione 2", href: selectedVideo || selectedGroup ? baseHref : null },
-          ...(selectedVideo ? [{ label: `Video ${number(selectedVideo.order)}` }] : [])
+          ...(selectedVideo ? [{ label: shortTitle(selectedVideo, selectedGroup) }] : [])
         ]),
         element("header", { className: "session-intro" }, [
           element("p", { className: "session-list-label", text: "Modulo 3 · Sessione 2" }),

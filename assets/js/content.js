@@ -147,10 +147,10 @@ window.courseData = Object.freeze({
                   author: "Silvia Masiero",
                   category: "Video pillole",
                   videos: [
-                    { id: "video-01", order: 1, title: "Adattamento del Setting Odontoiatrico — Pillola 01", duration: 527, type: "vimeo", iframeTitle: "Silvia Masiero — Adattamento del Setting Odontoiatrico — Pillola 01", embedUrl: "https://player.vimeo.com/video/1236854616?h=ffd40798c5" },
-                    { id: "video-02", order: 2, title: "Adattamento del Setting Odontoiatrico — Pillola 02", duration: 481, type: "vimeo", iframeTitle: "Silvia Masiero — Adattamento del Setting Odontoiatrico — Pillola 02", embedUrl: "https://player.vimeo.com/video/1236854651?h=3430ce8172" },
-                    { id: "video-03", order: 3, title: "Adattamento del Setting Odontoiatrico — Pillola 03", duration: 263, type: "vimeo", iframeTitle: "Silvia Masiero — Adattamento del Setting Odontoiatrico — Pillola 03", embedUrl: "https://player.vimeo.com/video/1236854804?h=fc2d77228c" },
-                    { id: "video-04", order: 4, title: "Adattamento del Setting Odontoiatrico — Pillola 04", duration: 310, type: "vimeo", iframeTitle: "Silvia Masiero — Adattamento del Setting Odontoiatrico — Pillola 04", embedUrl: "https://player.vimeo.com/video/1236854847?h=4f1775ecb1" }
+                    { id: "video-01", order: 1, title: "Video Pillola 01", duration: 527, type: "vimeo", iframeTitle: "Silvia Masiero — Video Pillola 01", embedUrl: "https://player.vimeo.com/video/1236854616?h=ffd40798c5" },
+                    { id: "video-02", order: 2, title: "Video Pillola 02", duration: 481, type: "vimeo", iframeTitle: "Silvia Masiero — Video Pillola 02", embedUrl: "https://player.vimeo.com/video/1236854651?h=3430ce8172" },
+                    { id: "video-03", order: 3, title: "Video Pillola 03", duration: 263, type: "vimeo", iframeTitle: "Silvia Masiero — Video Pillola 03", embedUrl: "https://player.vimeo.com/video/1236854804?h=fc2d77228c" },
+                    { id: "video-04", order: 4, title: "Video Pillola 04", duration: 310, type: "vimeo", iframeTitle: "Silvia Masiero — Video Pillola 04", embedUrl: "https://player.vimeo.com/video/1236854847?h=4f1775ecb1" }
                   ]
                 },
                 {
@@ -159,9 +159,9 @@ window.courseData = Object.freeze({
                   author: "Guerino Paolantoni",
                   category: "Video pillole",
                   videos: [
-                    { id: "video-05", order: 5, title: "La Gestione della Visita — Pillola 05", duration: 585, type: "vimeo", iframeTitle: "Guerino Paolantoni — La Gestione della Visita — Pillola 05", embedUrl: "https://player.vimeo.com/video/1236853792?h=bbff045a48" },
-                    { id: "video-06", order: 6, title: "La Gestione della Visita — Pillola 06", duration: 405, type: "vimeo", iframeTitle: "Guerino Paolantoni — La Gestione della Visita — Pillola 06", embedUrl: "https://player.vimeo.com/video/1236853821?h=592d91bb47" },
-                    { id: "video-07", order: 7, title: "La Gestione della Visita — Pillola 07", duration: 167, type: "vimeo", iframeTitle: "Guerino Paolantoni — La Gestione della Visita — Pillola 07", embedUrl: "https://player.vimeo.com/video/1236853846?h=bb5a9e8d0c" }
+                    { id: "video-05", order: 5, title: "Video Pillola 05", duration: 585, type: "vimeo", iframeTitle: "Guerino Paolantoni — Video Pillola 05", embedUrl: "https://player.vimeo.com/video/1236853792?h=bbff045a48" },
+                    { id: "video-06", order: 6, title: "Video Pillola 06", duration: 405, type: "vimeo", iframeTitle: "Guerino Paolantoni — Video Pillola 06", embedUrl: "https://player.vimeo.com/video/1236853821?h=592d91bb47" },
+                    { id: "video-07", order: 7, title: "Video Pillola 07", duration: 167, type: "vimeo", iframeTitle: "Guerino Paolantoni — Video Pillola 07", embedUrl: "https://player.vimeo.com/video/1236853846?h=bb5a9e8d0c" }
                   ]
                 },
                 {
