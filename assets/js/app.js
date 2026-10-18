@@ -120,6 +120,7 @@
   };
 
   const resourceActionLabel = (resource) => {
+    if (resource.type === "video-session") return "Esplora i 9 video";
     if (isVideoResource(resource)) return "Guarda la videolezione";
     if (resource.type === "pdf-guide") return "Apri la presentazione";
     return "Sfoglia il flipbook";
@@ -178,6 +179,7 @@
     const moduleCards = homepageModules.map((module, index) => {
       const available = module.status === "available";
       const resourceCount = module.resources.length;
+      const videoSession = module.resources.find((resource) => resource.type === "video-session");
       const cardTag = available ? "a" : "article";
       const cardAttributes = {
         className: `home-module-card home-module-card-${module.number}${available ? " is-available" : " is-coming"}`,
@@ -195,7 +197,9 @@
           }),
           icon(homepageIcons[index], "home-module-icon")
         ]),
-        element("p", { className: "home-module-category", text: available ? `${resourceCount} ${resourceCount === 1 ? "contenuto disponibile" : "contenuti disponibili"}` : module.statusLabel }),
+        element("p", { className: "home-module-category", text: videoSession
+          ? `1 flipbook · ${videoSession.sections.reduce((total, group) => total + group.videos.length, 0)} video`
+          : available ? `${resourceCount} ${resourceCount === 1 ? "contenuto disponibile" : "contenuti disponibili"}` : module.statusLabel }),
         element("h3", { text: module.subtitle }),
         element("p", { className: "home-module-summary", text: module.description }),
         element("span", { className: "home-module-chalk", "aria-hidden": "true" }),
@@ -603,6 +607,212 @@
     ]));
   };
 
+  const videoSessionView = (session, module, selectedId = null) => {
+    const allVideos = session.sections.flatMap((group) => group.videos);
+    const selectedVideo = allVideos.find((video) => video.id === selectedId);
+    const sectionId = new URLSearchParams(window.location.hash.split("?")[1] || "").get("sezione");
+    const selectedGroup = selectedVideo
+      ? session.sections.find((group) => group.videos.includes(selectedVideo))
+      : session.sections.find((group) => group.id === sectionId);
+    if ((selectedId && !selectedVideo) || (sectionId && !selectedGroup)) return notFoundView();
+
+    const baseHref = resourceHref(session, module);
+    const videoHref = (video) => `${baseHref}/${video.id}`;
+    const sectionHref = (group) => `${baseHref}?sezione=${group.id}`;
+    const number = (value) => String(value).padStart(2, "0");
+    const duration = (seconds) => `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+    const shortTitle = (video, group) => group.author
+      ? `Pillola ${number(video.order)}`
+      : video.title.replace("Video Intervista ", "Intervista ");
+    const poster = (video) => element("div", { className: "session-poster" }, [
+      element("img", {
+        src: `assets/module-3-session-2/video-${number(video.order)}.jpg`,
+        alt: "", width: "640", height: "360", loading: "lazy"
+      }),
+      element("span", { className: "session-play", "aria-hidden": "true" })
+    ]);
+    const card = (video, group, compact = false) => element("a", {
+      className: `session-video-card${compact ? " is-compact" : ""}${selectedVideo?.id === video.id ? " is-selected" : ""}`,
+      href: videoHref(video),
+      "aria-current": selectedVideo?.id === video.id ? "page" : null,
+      "aria-label": `${number(video.order)} · ${video.title}${group.author ? ` · ${group.author}` : ""}. Guarda il video`
+    }, [
+      poster(video),
+      element("div", { className: "session-card-copy" }, [
+        element("div", { className: "session-card-meta" }, [
+          element("span", { text: `Video ${number(video.order)}` }),
+          element("span", { text: duration(video.duration) })
+        ]),
+        element("h3", { text: shortTitle(video, group) }),
+        !compact ? element("p", { text: group.author || group.category }) : null
+      ])
+    ]);
+
+    const navToggle = element("button", {
+      className: "session-nav-toggle", type: "button",
+      "aria-expanded": "false", "aria-controls": "session-video-index",
+      onClick: () => {
+        const open = navToggle.getAttribute("aria-expanded") !== "true";
+        navToggle.setAttribute("aria-expanded", String(open));
+        sessionNav.classList.toggle("is-open", open);
+        if (open) contents.querySelector("a")?.focus({ preventScroll: true });
+      }
+    }, [
+      element("span", { text: "Esplora la sessione" }),
+      element("span", { className: "session-nav-symbol", text: "+", "aria-hidden": "true" })
+    ]);
+    const contents = element("div", { className: "session-nav-links", id: "session-video-index" }, [
+      element("a", {
+        className: "session-overview-link", href: baseHref,
+        "aria-current": !selectedVideo && !selectedGroup ? "page" : null
+      }, [element("strong", { text: "Tutta la sessione" }), element("small", { text: "9 video" })]),
+      ...session.sections.map((group) => element("div", { className: "session-nav-group" }, [
+        element("a", {
+          className: "session-nav-section", href: sectionHref(group),
+          "aria-current": !selectedVideo && selectedGroup === group ? "page" : null
+        }, [
+          element("strong", { text: group.author || "Video interviste" }),
+          element("span", { text: "→", "aria-hidden": "true" })
+        ]),
+        ...group.videos.map((video) => element("a", {
+          className: "session-nav-video", href: videoHref(video),
+          "aria-current": selectedVideo?.id === video.id ? "page" : null,
+          "aria-label": video.title
+        }, [
+          element("span", { text: number(video.order), "aria-hidden": "true" }),
+          element("span", { text: shortTitle(video, group) }),
+          element("small", { text: duration(video.duration) })
+        ]))
+      ]))
+    ]);
+    const closeIndex = () => {
+      navToggle.setAttribute("aria-expanded", "false");
+      sessionNav.classList.remove("is-open");
+    };
+    const sessionNav = element("nav", {
+      className: "session-navigation", "aria-label": "Indice della Sessione 2",
+      onKeydown: (event) => {
+        if (event.key !== "Escape") return;
+        closeIndex();
+        navToggle.focus();
+      },
+      onFocusout: (event) => {
+        if (!sessionNav.contains(event.relatedTarget)) closeIndex();
+      }
+    }, [contents, navToggle]);
+
+    const filters = element("nav", {
+      className: "session-filters", "aria-label": "Sezioni della Sessione 2"
+    }, [
+      element("a", {
+        href: baseHref, "aria-current": !selectedVideo && !selectedGroup ? "page" : null
+      }, [element("span", { text: "Tutta la sessione" }), element("small", { text: "9" })]),
+      ...session.sections.map((group) => element("a", {
+        href: sectionHref(group),
+        "aria-current": selectedGroup === group ? "page" : null
+      }, [
+        element("span", { text: group.author || "Interviste" }),
+        element("small", { text: group.videos.length })
+      ]))
+    ]);
+
+    let body;
+    if (selectedVideo) {
+      const currentIndex = allVideos.indexOf(selectedVideo);
+      const frame = element("div", { className: "video-frame" }, iframeFor(selectedVideo));
+      frame.querySelector("iframe")?.setAttribute("referrerpolicy", "strict-origin-when-cross-origin");
+      body = element("div", { className: "session-watch-layout" }, [
+        element("section", { className: "session-player", "aria-label": "Video selezionato" }, [
+          element("div", { className: "media-frame-shell" }, [
+            frame,
+            element("div", { className: "session-player-tools" }, [
+              element("span", { text: `Video ${number(selectedVideo.order)} di 09` }),
+              element("button", {
+                type: "button", text: "Ricarica video",
+                onClick: () => {
+                  const current = frame.querySelector("iframe");
+                  if (current) current.src = current.src;
+                }
+              })
+            ])
+          ]),
+          element("nav", { className: "session-player-navigation", "aria-label": "Navigazione tra i nove video" }, [
+            allVideos[currentIndex - 1]
+              ? element("a", { href: videoHref(allVideos[currentIndex - 1]), text: `← Video ${number(allVideos[currentIndex - 1].order)}` })
+              : element("span"),
+            element("a", { href: sectionHref(selectedGroup), text: "Torna alla sezione" }),
+            allVideos[currentIndex + 1]
+              ? element("a", { href: videoHref(allVideos[currentIndex + 1]), text: `Video ${number(allVideos[currentIndex + 1].order)} →` })
+              : element("span")
+          ])
+        ]),
+        element("aside", { className: "session-playlist", "aria-label": "Video della sezione" }, [
+          element("p", { className: "session-list-label", text: selectedGroup.author || "Video interviste" }),
+          element("h2", { text: selectedGroup.title }),
+          ...selectedGroup.videos.map((video) => card(video, selectedGroup, true))
+        ])
+      ]);
+    } else if (selectedGroup) {
+      body = element("section", { className: "session-category", "aria-label": selectedGroup.title }, [
+        element("div", { className: "session-category-bar" }, [
+          element("span", { text: `${selectedGroup.videos.length} video` }),
+          element("span", { text: selectedGroup.author ? `A cura di ${selectedGroup.author}` : "Paziente e caregiver" })
+        ]),
+        element("div", { className: "session-category-grid" },
+          selectedGroup.videos.map((video) => card(video, selectedGroup)))
+      ]);
+    } else {
+      const groupHeading = (group) => element("header", { className: "session-collection-heading" }, [
+        element("div", {}, [
+          element("p", { className: "session-list-label", text: group.author || "Paziente e caregiver" }),
+          element("h2", { text: group.title })
+        ]),
+        element("a", { className: "session-collection-link", href: sectionHref(group), "aria-label": `Apri la sezione ${group.title}`, text: `${group.videos.length} video →` })
+      ]);
+      const featured = session.sections[0];
+      body = element("div", { className: "session-library-overview" }, [
+        element("section", { className: "session-featured-collection", "aria-label": featured.title }, [
+          groupHeading(featured),
+          element("div", { className: "session-featured-grid" }, featured.videos.map((video) => card(video, featured)))
+        ]),
+        element("div", { className: "session-library-side" }, session.sections.slice(1).map((group) =>
+          element("section", { className: "session-compact-collection", "aria-label": group.title }, [
+            groupHeading(group),
+            element("div", { className: "session-compact-list" }, group.videos.map((video) => card(video, group, true)))
+          ])))
+      ]);
+    }
+
+    return element("div", { className: "view session-view" }, element("section", {
+      className: "session-page",
+      onClick: (event) => {
+        if (!event.target.closest(".session-navigation")) closeIndex();
+      }
+    }, [
+      element("div", { className: "section-shell" }, [
+        breadcrumb([
+          { label: "Home", href: "#/" },
+          { label: "Capitolo 1", href: "#/capitolo/1" },
+          { label: module.title, href: `#/capitolo/1/modulo/${module.number}` },
+          { label: "Sessione 2", href: selectedVideo || selectedGroup ? baseHref : null },
+          ...(selectedVideo ? [{ label: `Video ${number(selectedVideo.order)}` }] : [])
+        ]),
+        element("header", { className: "session-intro" }, [
+          element("p", { className: "session-list-label", text: "Modulo 3 · Sessione 2" }),
+          element("h1", { text: selectedVideo ? selectedVideo.title : selectedGroup ? selectedGroup.title : session.title }),
+          element("p", { className: "session-intro-copy", text: selectedVideo
+            ? `${selectedGroup.author || selectedGroup.category} · ${duration(selectedVideo.duration)}`
+            : selectedGroup
+              ? selectedGroup.author ? `Video pillole a cura di ${selectedGroup.author}.` : "Le voci del paziente e del caregiver, nella stessa sezione."
+              : "Setting odontoiatrico, gestione della visita e testimonianze. Nove video, tre percorsi da scegliere." })
+        ]),
+        filters, body, sessionNav,
+        element("div", { className: "button-row session-back" }, [
+          buttonLink("Torna al Modulo 3", `#/capitolo/1/modulo/${module.number}`, "secondary")
+        ])
+      ])
+    ]));
+  };
   const comingSoonView = (chapter) => {
     const number = String(chapter.number).padStart(2, "0");
     const intro = section("page-hero", [
@@ -830,7 +1040,7 @@
     else if (path === "/informazioni") page = informationView();
     else {
       const moduleMatch = path.match(/^\/capitolo\/([123])\/modulo\/(\d+)$/);
-      const resourceMatch = path.match(/^\/capitolo\/1\/modulo\/(\d+)\/([^/]+)$/);
+      const resourceMatch = path.match(/^\/capitolo\/1\/modulo\/(\d+)\/([^/]+)(?:\/([^/]+))?$/);
       const activeChapter = moduleMatch
         ? data.chapters.find((chapter) => chapter.number === Number(moduleMatch[1]))
         : chapterOne;
@@ -847,7 +1057,9 @@
           ? moduleView(module)
           : comingSoonModuleView(activeChapter, module)
         : resource && module
-          ? resourceView(resource, module)
+          ? resource.type === "video-session"
+            ? videoSessionView(resource, module, resourceMatch[3] || null)
+            : resourceMatch[3] ? notFoundView() : resourceView(resource, module)
           : notFoundView();
     }
 

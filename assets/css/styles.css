@@ -3130,6 +3130,174 @@ h1[tabindex="-1"]:focus {
   text-align: center;
 }
 
+/* Chapter 1 / Module 3 / Session 2: link-based media library. */
+.view.session-view { animation: none; }
+.session-page { padding-block: 1.5rem 3rem; }
+.session-page > .section-shell { padding-block: 0; }
+.session-page .breadcrumbs { margin-bottom: 0.5rem; }
+.session-intro { padding-block: 1.35rem 1.2rem; max-width: 65rem; }
+.session-intro h1 {
+  margin: 0.4rem 0 0.6rem;
+  font-size: clamp(1.7rem, 3vw, 2.5rem);
+  line-height: 1.12;
+  letter-spacing: -0.04em;
+}
+.session-list-label {
+  margin: 0 0 0.3rem;
+  color: #a4d8f3;
+  font-size: 0.76rem;
+  font-weight: 650;
+  line-height: 1.5;
+}
+.session-intro-copy { margin: 0; max-width: 50rem; color: var(--muted); font-size: 0.94rem; line-height: 1.6; }
+.session-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.25rem;
+  margin-bottom: 1.8rem;
+  border-bottom: 1px solid rgb(255 255 255 / 12%);
+}
+.session-filters a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.8rem 0.1rem;
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+.session-filters a[aria-current="page"] { border-bottom-color: var(--ochre); color: var(--warm-white); }
+.session-filters a:hover { color: var(--warm-white); }
+.session-filters small { color: #a4d8f3; font-size: 0.67rem; font-weight: 500; }
+.session-library-overview { display: grid; grid-template-columns: 1.16fr 1fr; gap: clamp(2rem, 4vw, 3.5rem); align-items: start; }
+.session-library-side { display: grid; gap: 1.8rem; }
+.session-collection-heading { display: flex; align-items: start; justify-content: space-between; gap: 1rem; margin-bottom: 1.1rem; }
+.session-collection-heading h2 { margin: 0; font-size: 1.06rem; font-weight: 650; line-height: 1.4; letter-spacing: -0.02em; }
+.session-collection-link { flex-shrink: 0; padding-top: 0.2rem; color: var(--warm-white); font-size: 0.72rem; text-decoration: none; }
+.session-collection-link:hover { color: #f4c766; }
+.session-featured-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem 1rem; }
+.session-video-card { display: block; min-width: 0; color: var(--warm-white); text-decoration: none; }
+.session-poster { position: relative; overflow: hidden; aspect-ratio: 16 / 9; border-radius: 0.65rem; background: var(--slate-950); }
+.session-poster img { display: block; width: 100%; height: 100%; object-fit: contain; transition: opacity 180ms ease; }
+.session-play {
+  position: absolute; inset: 50% auto auto 50%;
+  display: grid; width: 2.5rem; height: 2.5rem; place-items: center;
+  border: 1px solid rgb(255 255 255 / 75%); border-radius: 50%;
+  background: rgb(17 27 34 / 85%);
+  opacity: 0; transform: translate(-50%, -50%);
+  transition: opacity 180ms ease;
+}
+.session-play::after {
+  width: 0; height: 0; margin-left: 0.18rem;
+  border-top: 0.33rem solid transparent; border-bottom: 0.33rem solid transparent;
+  border-left: 0.55rem solid var(--warm-white); content: "";
+}
+.session-video-card:hover .session-play,
+.session-video-card:focus-visible .session-play { opacity: 1; }
+.session-video-card:hover h3 { color: #f4c766; }
+.session-card-copy { padding-top: 0.65rem; }
+.session-card-meta { display: flex; justify-content: space-between; gap: 0.5rem; color: var(--muted); font-size: 0.66rem; line-height: 1.4; font-variant-numeric: tabular-nums; }
+.session-card-copy h3 { margin: 0.25rem 0; font-size: 0.95rem; font-weight: 650; line-height: 1.35; letter-spacing: -0.015em; }
+.session-card-copy p { margin: 0; color: var(--muted); font-size: 0.7rem; line-height: 1.5; }
+.session-compact-list { display: grid; gap: 0.9rem; }
+.session-video-card.is-compact { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); align-items: center; gap: 0.9rem; }
+.session-video-card.is-compact .session-card-copy { padding: 0; }
+.session-video-card.is-compact .session-card-meta { justify-content: start; gap: 0.8rem; }
+.session-video-card.is-compact h3 { font-size: 0.86rem; }
+.session-category-bar { display: flex; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; color: var(--muted); font-size: 0.8rem; }
+.session-category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 1.4rem; }
+.session-watch-layout { display: grid; grid-template-columns: minmax(0, 2.65fr) minmax(15.5rem, 1fr); gap: 1.8rem; align-items: start; }
+.session-player { min-width: 0; }
+.session-player .media-frame-shell { border-radius: 0.8rem; }
+.session-player-tools { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.75rem 1rem; background: var(--slate-800); color: var(--muted); font-size: 0.72rem; }
+.session-player-tools button { padding: 0.4rem; border: 0; background: transparent; color: var(--warm-white); cursor: pointer; font-size: 0.75rem; text-decoration: underline; text-underline-offset: 0.2rem; }
+.session-player-navigation { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 1rem 0; font-size: 0.75rem; }
+.session-player-navigation a { color: var(--warm-white); text-underline-offset: 0.25rem; }
+.session-playlist { display: grid; gap: 0.9rem; padding: 1.15rem; border: 1px solid rgb(255 255 255 / 12%); border-radius: 0.8rem; background: var(--slate-800); }
+.session-playlist > .session-list-label { margin: 0; }
+.session-playlist > h2 { margin: -0.4rem 0 0.2rem; font-size: 0.95rem; font-weight: 650; line-height: 1.4; }
+.session-playlist .session-video-card.is-compact { grid-template-columns: 5.2rem minmax(0, 1fr); gap: 0.65rem; padding: 0.4rem; margin-inline: -0.4rem; border-radius: 0.5rem; }
+.session-playlist .session-video-card.is-selected { background: rgb(241 166 16 / 12%); }
+.session-playlist .session-video-card.is-selected h3 { color: #f4c766; }
+.session-playlist .session-card-meta { font-size: 0.58rem; gap: 0.4rem; }
+.session-playlist .session-card-copy h3 { font-size: 0.76rem; }
+.session-navigation {
+  position: fixed;
+  right: var(--gutter);
+  bottom: max(1.25rem, env(safe-area-inset-bottom));
+  z-index: 80;
+  width: min(21rem, calc(100vw - 2rem));
+  padding: 0.4rem;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 0.95rem;
+  background: #202f39;
+  box-shadow: 0 12px 38px rgb(6 18 26 / 35%);
+}
+.session-nav-toggle {
+  display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 1rem;
+  min-height: 3rem; padding: 0.65rem 0.95rem; border: 0; border-radius: 0.65rem;
+  background: var(--cream); color: var(--ink); cursor: pointer; font-size: 0.85rem; font-weight: 750;
+}
+.session-nav-symbol { font-size: 1.4rem; font-weight: 400; line-height: 1; transition: transform 180ms ease; }
+.session-navigation.is-open .session-nav-symbol { transform: rotate(45deg); }
+.session-nav-links { display: none; max-height: min(36rem, calc(100dvh - 12rem)); overflow-y: auto; padding: 0.4rem 0.5rem 0.8rem; margin-bottom: 0.4rem; scrollbar-width: thin; }
+.session-navigation.is-open .session-nav-links { display: block; }
+.session-navigation a { text-decoration: none; }
+.session-overview-link { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; padding: 0.75rem 0.5rem; border-radius: 0.5rem; color: var(--warm-white); font-size: 0.82rem; }
+.session-overview-link small { color: #a4d8f3; font-size: 0.68rem; }
+.session-overview-link[aria-current="page"] { color: #f4c766; }
+.session-nav-group { margin-top: 0.5rem; padding-top: 0.65rem; border-top: 1px solid rgb(255 255 255 / 12%); }
+.session-nav-section { display: flex; justify-content: space-between; gap: 0.6rem; padding: 0.4rem 0.5rem; color: var(--warm-white); font-size: 0.8rem; }
+.session-nav-section[aria-current="page"] { color: #f4c766; }
+.session-nav-video { display: grid; grid-template-columns: 1.2rem minmax(0, 1fr) auto; align-items: center; gap: 0.5rem; min-height: 2.2rem; padding: 0.4rem 0.5rem; border-radius: 0.4rem; color: var(--muted); font-size: 0.75rem; line-height: 1.4; }
+.session-nav-video > span:first-child,
+.session-nav-video small { font-size: 0.64rem; }
+.session-nav-video[aria-current="page"],
+.session-nav-video:hover,
+.session-nav-section:hover { background: rgb(255 255 255 / 7%); color: #f4c766; }
+.session-back { margin-top: 2rem; padding-bottom: 4rem; }
+@media (max-width: 1100px) {
+  .session-library-overview { gap: 1.8rem; }
+  .session-video-card.is-compact { grid-template-columns: 6.2rem minmax(0, 1fr); gap: 0.7rem; }
+  .session-watch-layout { grid-template-columns: minmax(0, 1fr) 15.5rem; gap: 1.25rem; }
+  .session-playlist { padding: 0.8rem; }
+}
+@media (max-width: 800px) {
+  .session-library-overview { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
+  .session-library-side { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.4rem; }
+  .session-watch-layout { grid-template-columns: minmax(0, 1fr); }
+  .session-playlist { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .session-playlist > .session-list-label,
+  .session-playlist > h2 { grid-column: 1 / -1; }
+  .session-category-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .session-collection-heading { flex-wrap: wrap; gap: 0.3rem; }
+  .session-collection-link { padding-bottom: 0.3rem; }
+}
+@media (max-width: 560px) {
+  .session-page { padding-top: 0.8rem; }
+  .session-intro { padding-block: 1rem; }
+  .session-intro-copy { font-size: 0.83rem; }
+  .session-filters { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 0.8rem; }
+  .session-filters a { justify-content: space-between; font-size: 0.73rem; padding-block: 0.65rem; }
+  .session-library-side { grid-template-columns: minmax(0, 1fr); gap: 1.8rem; }
+  .session-featured-grid { gap: 1.1rem 0.8rem; }
+  .session-card-copy h3 { font-size: 0.84rem; }
+  .session-card-copy p { font-size: 0.65rem; }
+  .session-category-bar { font-size: 0.7rem; }
+  .session-category-grid { gap: 1rem; }
+  .session-playlist { grid-template-columns: minmax(0, 1fr); }
+  .session-navigation { right: 1rem; width: min(20rem, calc(100vw - 2rem)); }
+  .session-nav-video { min-height: 2.75rem; }
+  .session-player-navigation { font-size: 0.67rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .session-poster img,
+  .session-play,
+  .session-nav-symbol { transition: none; }
+}
+
 @media (max-width: 700px) {
   .guide-control-icon { width: 2.3rem; height: 2.3rem; }
   .guide-control-previous { left: 0.55rem; }

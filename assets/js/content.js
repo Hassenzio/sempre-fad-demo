@@ -118,7 +118,8 @@ window.courseData = Object.freeze({
           status: "available",
           statusLabel: "Disponibile in demo",
           sourceItems: [
-            "Flipbook di approfondimento"
+            "Flipbook: L'adattamento del Setting Odontoiatrico e la Gestione della Visita",
+            "Sessione 2: nove video pillole e interviste in tre sezioni"
           ],
           resources: [
             {
@@ -126,10 +127,53 @@ window.courseData = Object.freeze({
               order: 1,
               type: "heyzine",
               category: "Materiale di approfondimento",
-              title: "Flipbook — Pillole e testimonianze",
+              title: "Flipbook: L'adattamento del Setting Odontoiatrico e la Gestione della Visita",
               description: "Materiale sfogliabile del Modulo 3, consultabile direttamente nel percorso formativo.",
               iframeTitle: "Flipbook Capitolo 1 Modulo 3",
               embedUrl: "https://heyzine.com/flip-book/43d79e0d7c.html"
+            },
+            {
+              id: "sessione-2",
+              order: 2,
+              type: "video-session",
+              category: "Sessione 2 · Video pillole e interviste",
+              title: "Video pillole e interviste",
+              description: "Nove video in tre sezioni: Adattamento del Setting Odontoiatrico a cura di Silvia Masiero, La Gestione della Visita a cura di Guerino Paolantoni e le interviste a paziente e caregiver.",
+              sourceUrl: "https://docs.google.com/document/d/1zvTINGKxB9JAjwg8XIfFKV84aCPNjkoc9qJxx_ytr00/edit",
+              sections: [
+                {
+                  id: "setting",
+                  title: "Adattamento del Setting Odontoiatrico",
+                  author: "Silvia Masiero",
+                  category: "Video pillole",
+                  videos: [
+                    { id: "video-01", order: 1, title: "Adattamento del Setting Odontoiatrico — Pillola 01", duration: 527, type: "vimeo", iframeTitle: "Silvia Masiero — Adattamento del Setting Odontoiatrico — Pillola 01", embedUrl: "https://player.vimeo.com/video/1236854616?h=ffd40798c5" },
+                    { id: "video-02", order: 2, title: "Adattamento del Setting Odontoiatrico — Pillola 02", duration: 481, type: "vimeo", iframeTitle: "Silvia Masiero — Adattamento del Setting Odontoiatrico — Pillola 02", embedUrl: "https://player.vimeo.com/video/1236854651?h=3430ce8172" },
+                    { id: "video-03", order: 3, title: "Adattamento del Setting Odontoiatrico — Pillola 03", duration: 263, type: "vimeo", iframeTitle: "Silvia Masiero — Adattamento del Setting Odontoiatrico — Pillola 03", embedUrl: "https://player.vimeo.com/video/1236854804?h=fc2d77228c" },
+                    { id: "video-04", order: 4, title: "Adattamento del Setting Odontoiatrico — Pillola 04", duration: 310, type: "vimeo", iframeTitle: "Silvia Masiero — Adattamento del Setting Odontoiatrico — Pillola 04", embedUrl: "https://player.vimeo.com/video/1236854847?h=4f1775ecb1" }
+                  ]
+                },
+                {
+                  id: "visita",
+                  title: "La Gestione della Visita",
+                  author: "Guerino Paolantoni",
+                  category: "Video pillole",
+                  videos: [
+                    { id: "video-05", order: 5, title: "La Gestione della Visita — Pillola 05", duration: 585, type: "vimeo", iframeTitle: "Guerino Paolantoni — La Gestione della Visita — Pillola 05", embedUrl: "https://player.vimeo.com/video/1236853792?h=bbff045a48" },
+                    { id: "video-06", order: 6, title: "La Gestione della Visita — Pillola 06", duration: 405, type: "vimeo", iframeTitle: "Guerino Paolantoni — La Gestione della Visita — Pillola 06", embedUrl: "https://player.vimeo.com/video/1236853821?h=592d91bb47" },
+                    { id: "video-07", order: 7, title: "La Gestione della Visita — Pillola 07", duration: 167, type: "vimeo", iframeTitle: "Guerino Paolantoni — La Gestione della Visita — Pillola 07", embedUrl: "https://player.vimeo.com/video/1236853846?h=bb5a9e8d0c" }
+                  ]
+                },
+                {
+                  id: "interviste",
+                  title: "Video interviste",
+                  category: "Paziente e caregiver",
+                  videos: [
+                    { id: "video-08", order: 8, title: "Video Intervista Paziente", duration: 424, type: "vimeo", iframeTitle: "Video Intervista Paziente", embedUrl: "https://player.vimeo.com/video/1236854867?h=c9e7dcd599" },
+                    { id: "video-09", order: 9, title: "Video Intervista Caregiver", duration: 473, type: "vimeo", iframeTitle: "Video Intervista Caregiver", embedUrl: "https://player.vimeo.com/video/1236854324?h=f615739ecb" }
+                  ]
+                }
+              ]
             }
           ]
         }
