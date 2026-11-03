@@ -149,8 +149,8 @@ window.courseData = Object.freeze({
                   videos: [
                     { id: "video-01", order: 1, title: "Video Pillola 01", duration: 527, type: "vimeo", iframeTitle: "Silvia Masiero — Video Pillola 01", embedUrl: "https://player.vimeo.com/video/1236854616?h=ffd40798c5" },
                     { id: "video-02", order: 2, title: "Video Pillola 02", duration: 481, type: "vimeo", iframeTitle: "Silvia Masiero — Video Pillola 02", embedUrl: "https://player.vimeo.com/video/1236854651?h=3430ce8172" },
-                    { id: "video-03", order: 3, title: "Video Pillola 03", previewTitle: "Comunicazione Aumentativa Alternativa", posterFile: "video-04.jpg", duration: 310, type: "vimeo", iframeTitle: "Silvia Masiero — Video Pillola 03: Comunicazione Aumentativa Alternativa", embedUrl: "https://player.vimeo.com/video/1236854847?h=4f1775ecb1" },
-                    { id: "video-04", order: 4, title: "Video Pillola 04", previewTitle: "Agenda iconica o storia sociale", posterFile: "video-03.jpg", duration: 263, type: "vimeo", iframeTitle: "Silvia Masiero — Video Pillola 04: Agenda iconica o storia sociale", embedUrl: "https://player.vimeo.com/video/1236854804?h=fc2d77228c" }
+                    { id: "video-03", order: 3, title: "Video Pillola 03", previewTitle: "Comunicazione Aumentativa Alternativa", posterFile: "video-04.jpg", duration: 263, type: "vimeo", iframeTitle: "Silvia Masiero — Video Pillola 03: Comunicazione Aumentativa Alternativa", embedUrl: "https://player.vimeo.com/video/1236854804?h=fc2d77228c" },
+                    { id: "video-04", order: 4, title: "Video Pillola 04", previewTitle: "Agenda iconica o storia sociale", posterFile: "video-03.jpg", duration: 310, type: "vimeo", iframeTitle: "Silvia Masiero — Video Pillola 04: Agenda iconica o storia sociale", embedUrl: "https://player.vimeo.com/video/1236854847?h=4f1775ecb1" }
                   ]
                 },
                 {
