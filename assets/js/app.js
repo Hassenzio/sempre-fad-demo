@@ -624,22 +624,28 @@
     const shortTitle = (video, group) => group.author
       ? `Video Pillola ${number(video.order)}`
       : video.title.replace("Video Intervista ", "Intervista ");
-    const poster = (video) => element("div", { className: "session-poster" }, [
+    const poster = (video) => element("div", {
+      className: `session-poster${video.previewTitle ? " has-title-overlay" : ""}`
+    }, [
       element("img", {
-        src: `assets/module-3-session-2/video-${number(video.order)}.jpg`,
+        src: `assets/module-3-session-2/${video.posterFile || `video-${number(video.order)}.jpg`}`,
         alt: "", width: "640", height: "360", loading: "lazy"
       }),
+      video.previewTitle ? element("span", {
+        className: "session-poster-title", text: video.previewTitle, "aria-hidden": "true"
+      }) : null,
       element("span", { className: "session-play", "aria-hidden": "true" })
     ]);
     const card = (video, group, compact = false) => element("a", {
       className: `session-video-card${compact ? " is-compact" : ""}${selectedVideo?.id === video.id ? " is-selected" : ""}`,
       href: videoHref(video),
       "aria-current": selectedVideo?.id === video.id ? "page" : null,
-      "aria-label": `${video.title}${group.author ? ` · ${group.author}` : ""}. Guarda il video`
+      "aria-label": `${video.title}${video.previewTitle ? `: ${video.previewTitle}` : ""}${group.author ? ` · ${group.author}` : ""}. Guarda il video`
     }, [
       poster(video),
       element("div", { className: "session-card-copy" }, [
         element("h3", { text: shortTitle(video, group) }),
+        video.previewTitle ? element("p", { className: "session-card-topic", text: video.previewTitle }) : null,
         element("div", { className: "session-card-meta" }, [
           !compact ? element("span", { text: group.author || group.category }) : null,
           element("span", { text: duration(video.duration) })
@@ -751,7 +757,7 @@
         ])
       ]);
     } else if (selectedGroup) {
-      body = element("section", { className: "session-category", "aria-label": selectedGroup.title }, [
+      body = element("section", { className: `session-category session-category-${selectedGroup.id}`, "aria-label": selectedGroup.title }, [
         element("div", { className: "session-category-bar" }, [
           element("span", { text: `${selectedGroup.videos.length} video` }),
           element("span", { text: selectedGroup.author ? `A cura di ${selectedGroup.author}` : "Paziente e caregiver" })
