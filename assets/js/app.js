@@ -107,8 +107,8 @@
 
   const view = (...children) => element("div", { className: "view" }, children);
 
-  const resourceHref = (resource, module = moduleOne) =>
-    `#/capitolo/1/modulo/${module.number}/${resource.id}`;
+  const resourceHref = (resource, module = moduleOne, chapter = chapterOne) =>
+    `#/capitolo/${chapter.number}/modulo/${module.number}/${resource.id}`;
 
   const isVideoResource = (resource) =>
     resource.type === "vimeo" || resource.type === "youtube";
@@ -335,13 +335,13 @@
     return view(intro, moduleRoadmap);
   };
 
-  const moduleView = (module = moduleOne) => {
+  const moduleView = (module = moduleOne, chapter = chapterOne) => {
     const moduleResources = module.resources;
     const heading = section("page-hero", [
       element("div", { className: "section-shell compact" }, [
         breadcrumb([
           { label: "Home", href: "#/" },
-          { label: "Capitolo 1", href: "#/capitolo/1" },
+          { label: chapter.title, href: `#/capitolo/${chapter.number}` },
           { label: module.title }
         ]),
         eyebrow("CONTENUTI DISPONIBILI NELLA VERSIONE DIMOSTRATIVA"),
@@ -368,7 +368,7 @@
           element("div", { className: "button-row" }, [
             buttonLink(
               resourceActionLabel(resource),
-              resourceHref(resource, module)
+              resourceHref(resource, module, chapter)
             )
           ])
         ])
@@ -523,7 +523,7 @@
     ]);
   };
 
-  const resourceView = (resource, module = moduleOne) => {
+  const resourceView = (resource, module = moduleOne, chapter = chapterOne) => {
     const moduleResources = module.resources;
     const currentIndex = moduleResources.findIndex((item) => item.id === resource.id);
     const previous = moduleResources[currentIndex - 1];
@@ -565,13 +565,13 @@
       "aria-label": "Navigazione tra le risorse"
     }, [
       previous
-        ? element("a", { className: "nav-resource", href: resourceHref(previous, module) }, [
+        ? element("a", { className: "nav-resource", href: resourceHref(previous, module, chapter) }, [
             element("small", { text: "Precedente" }),
             element("strong", { text: previous.title })
           ])
         : element("span", { className: "nav-resource placeholder", "aria-hidden": "true" }),
       next
-        ? element("a", { className: "nav-resource", href: resourceHref(next, module) }, [
+        ? element("a", { className: "nav-resource", href: resourceHref(next, module, chapter) }, [
             element("small", { text: "Successivo" }),
             element("strong", { text: next.title })
           ])
@@ -582,8 +582,8 @@
       element("div", { className: "section-shell compact media-page" }, [
         breadcrumb([
           { label: "Home", href: "#/" },
-          { label: "Capitolo 1", href: "#/capitolo/1" },
-          { label: module.title, href: `#/capitolo/1/modulo/${module.number}` },
+          { label: chapter.title, href: `#/capitolo/${chapter.number}` },
+          { label: module.title, href: `#/capitolo/${chapter.number}/modulo/${module.number}` },
           { label: shortLabel }
         ]),
         element("div", { className: "media-heading" }, [
@@ -601,7 +601,7 @@
         frame,
         resourceNav,
         element("div", { className: "button-row" }, [
-          buttonLink(`Torna al ${module.title}`, `#/capitolo/1/modulo/${module.number}`, "secondary")
+          buttonLink(`Torna al ${module.title}`, `#/capitolo/${chapter.number}/modulo/${module.number}`, "secondary")
         ])
       ])
     ]));
@@ -819,6 +819,7 @@
   };
   const comingSoonView = (chapter) => {
     const number = String(chapter.number).padStart(2, "0");
+    const hasAvailable = chapter.modules.some((module) => module.status === "available");
     const intro = section("page-hero", [
       element("div", { className: "section-shell compact" }, [
         breadcrumb([
@@ -836,7 +837,7 @@
             }),
             element("p", {
               className: "availability-note",
-              text: "I contenuti di questo capitolo non sono inclusi nella versione dimostrativa."
+              text: hasAvailable ? "Il Modulo 1 è disponibile nella demo. Gli altri contenuti sono in preparazione." : "I contenuti di questo capitolo non sono inclusi nella versione dimostrativa."
             }),
             element("div", { className: "button-row" }, [
               buttonLink("Torna al percorso", "#/", "secondary")
@@ -857,7 +858,7 @@
             element("h2", { text: "La struttura prevista." })
           ]),
           element("p", {
-            text: "I moduli sono mostrati per descrivere l’architettura futura. Non contengono ancora risorse navigabili."
+            text: hasAvailable ? "Esplora il modulo disponibile; gli altri contenuti sono in preparazione." : "I moduli sono mostrati per descrivere l’architettura futura. Non contengono ancora risorse navigabili."
           })
         ]),
         element("div", {
@@ -877,7 +878,8 @@
               element("h2", { text: module.subtitle }),
               element("p", { text: module.description }),
               element("ul", { className: "source-items" },
-                module.sourceItems.map((item) => element("li", { text: item })))
+                module.sourceItems.map((item) => element("li", { text: item }))),
+              module.status === "available" ? buttonLink("Apri il modulo", `#/capitolo/${chapter.number}/modulo/${module.number}`, "secondary") : null
             ]))),
         stagedModule
           ? element("div", { className: "narrative-journey" }, [
@@ -1044,26 +1046,26 @@
     else if (path === "/informazioni") page = informationView();
     else {
       const moduleMatch = path.match(/^\/capitolo\/([123])\/modulo\/(\d+)$/);
-      const resourceMatch = path.match(/^\/capitolo\/1\/modulo\/(\d+)\/([^/]+)(?:\/([^/]+))?$/);
-      const activeChapter = moduleMatch
-        ? data.chapters.find((chapter) => chapter.number === Number(moduleMatch[1]))
+      const resourceMatch = path.match(/^\/capitolo\/([12])\/modulo\/(\d+)\/([^/]+)(?:\/([^/]+))?$/);
+      const activeChapter = moduleMatch || resourceMatch
+        ? data.chapters.find((chapter) => chapter.number === Number((moduleMatch || resourceMatch)[1]))
         : chapterOne;
       const module = moduleMatch
         ? activeChapter?.modules.find((item) => item.number === Number(moduleMatch[2]))
         : resourceMatch
-          ? chapterOne.modules.find((item) => item.number === Number(resourceMatch[1]))
+          ? activeChapter?.modules.find((item) => item.number === Number(resourceMatch[2]))
           : null;
       const resource = resourceMatch && module
-        ? module.resources.find((item) => item.id === resourceMatch[2])
+        ? module.resources.find((item) => item.id === resourceMatch[3])
         : null;
       page = moduleMatch && module
         ? module.status === "available"
-          ? moduleView(module)
+          ? moduleView(module, activeChapter)
           : comingSoonModuleView(activeChapter, module)
         : resource && module
           ? resource.type === "video-session"
-            ? videoSessionView(resource, module, resourceMatch[3] || null)
-            : resourceMatch[3] ? notFoundView() : resourceView(resource, module)
+            ? videoSessionView(resource, module, resourceMatch[4] || null)
+            : resourceMatch[4] ? notFoundView() : resourceView(resource, module, activeChapter)
           : notFoundView();
     }
 

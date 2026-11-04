@@ -183,24 +183,34 @@ window.courseData = Object.freeze({
       id: "capitolo-2",
       number: 2,
       title: "Capitolo 2",
-      status: "coming-soon",
-      statusLabel: "Contenuti in preparazione",
+      status: "available",
+      statusLabel: "Contenuti parzialmente disponibili",
       description: "Il secondo capitolo sviluppa strumenti visivi, storie sociali e strategie educative in tre moduli.",
       modules: [
         {
           id: "modulo-1",
           number: 1,
           title: "Modulo 1",
-          subtitle: "Storie sociali e storia a fumetti",
-          description: "Una presentazione introduce le storie sociali e una storia a fumetti in formato sfogliabile.",
-          status: "coming-soon",
-          statusLabel: "Contenuti in preparazione",
+          subtitle: "Competenze Emotive-Comunicazionali",
+          description: "Accoglienza e costruzione della fiducia.",
+          status: "available",
+          statusLabel: "Disponibile in demo",
           sourceItems: [
+            "Flipbook: Accoglienza e costruzione della fiducia",
             "Presentazione del modulo",
             "Video sulle storie sociali",
             "Storia a fumetti"
           ],
-          resources: []
+          resources: [{
+            id: "flipbook",
+            order: 1,
+            type: "heyzine",
+            category: "Materiale di approfondimento",
+            title: "Accoglienza e costruzione della fiducia",
+            description: "Competenze Emotive-Comunicazionali",
+            iframeTitle: "Capitolo 2 Modulo 1: Accoglienza e costruzione della fiducia",
+            embedUrl: "https://heyzine.com/flip-book/b222cd0335.html"
+          }]
         },
         {
           id: "modulo-2",
