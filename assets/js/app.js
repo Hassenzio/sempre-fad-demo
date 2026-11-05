@@ -114,12 +114,15 @@
     resource.type === "vimeo" || resource.type === "youtube";
 
   const resourceIconName = (resource) => {
+    if (resource.type === "comic") return "pages";
     if (resource.type === "pdf-guide") return "pages";
     if (resource.type === "heyzine") return "pages";
     return ["dialogue", "heart", "bridge"][resource.order - 1] || "dialogue";
   };
 
   const resourceActionLabel = (resource) => {
+    if (resource.type === "comic") return "Leggi il fumetto";
+    if (resource.id === "videoclip-primo-contatto") return "Guarda il videoclip";
     if (resource.type === "video-session") return "Esplora i 9 video";
     if (isVideoResource(resource)) return "Guarda la videolezione";
     if (resource.type === "pdf-guide") return "Apri la presentazione";
@@ -523,6 +526,61 @@
     ]);
   };
 
+  const comicViewer = (resource) => {
+    let current = 0;
+    const slides = Array.from({ length: resource.pageCount }, (_, index) => {
+      const page = index + 1;
+      const img = element("img", {
+        src: resource.pagePath.replace("{page}", String(page).padStart(2, "0")),
+        alt: `Fumetto Primo contatto, tavola ${page} di ${resource.pageCount}`,
+        width: "1600",
+        height: "900",
+        loading: page > 2 ? "lazy" : "eager",
+        draggable: "false"
+      });
+      return element("div", { className: "comic-slide", role: "group", "aria-label": `Tavola ${page} di ${resource.pageCount}` }, img);
+    });
+    const count = element("span", { className: "comic-count", "aria-live": "polite" });
+    const previous = element("button", { className: "comic-arrow", type: "button", "aria-label": "Tavola precedente", text: "←" });
+    const next = element("button", { className: "comic-arrow", type: "button", "aria-label": "Tavola successiva", text: "→" });
+    const track = element("div", {
+      className: "comic-track",
+      tabindex: "0",
+      role: "region",
+      "aria-label": "Tavole del fumetto; usa le frecce per navigare"
+    }, slides);
+    const update = () => {
+      count.textContent = `${String(current + 1).padStart(2, "0")} / ${String(resource.pageCount).padStart(2, "0")}`;
+      previous.disabled = current === 0;
+      next.disabled = current === resource.pageCount - 1;
+    };
+    const go = (index) => {
+      current = Math.max(0, Math.min(resource.pageCount - 1, index));
+      track.scrollTo({ left: current * track.clientWidth, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+      update();
+    };
+    previous.addEventListener("click", () => go(current - 1));
+    next.addEventListener("click", () => go(current + 1));
+    track.addEventListener("scroll", () => {
+      const index = Math.max(0, Math.min(resource.pageCount - 1, Math.round(track.scrollLeft / track.clientWidth)));
+      if (index !== current) { current = index; update(); }
+    }, { passive: true });
+    track.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+        event.preventDefault();
+        go(current + (event.key === "ArrowRight" ? 1 : -1));
+      }
+    });
+    update();
+    return element("div", { className: "comic-reader" }, [
+      track,
+      element("div", { className: "comic-controls" }, [
+        element("span", { className: "comic-hint", text: "Scorri le tavole" }),
+        element("div", { className: "comic-navigation" }, [previous, count, next])
+      ])
+    ]);
+  };
+
   const resourceView = (resource, module = moduleOne, chapter = chapterOne) => {
     const moduleResources = module.resources;
     const currentIndex = moduleResources.findIndex((item) => item.id === resource.id);
@@ -530,18 +588,20 @@
     const next = moduleResources[currentIndex + 1];
     const shortLabel = resource.type === "pdf-guide"
       ? "Presentazione guida"
+      : resource.type === "comic" ? "Fumetto"
+      : resource.id === "videoclip-primo-contatto" ? "Videoclip"
       : resource.id === "flipbook"
         ? "Flipbook"
         : `Parte ${resource.order}`;
 
     const mediaViewport = element("div", {
-      className: resource.type === "pdf-guide"
+      className: resource.type === "comic" ? "comic-frame" : resource.type === "pdf-guide"
         ? "guide-frame"
         : isVideoResource(resource) ? "video-frame" : "flipbook-frame"
-    }, resource.type === "pdf-guide" ? guideViewer(resource) : iframeFor(resource));
+    }, resource.type === "comic" ? comicViewer(resource) : resource.type === "pdf-guide" ? guideViewer(resource) : iframeFor(resource));
     const frame = element("div", { className: "media-frame-shell" }, [
       mediaViewport,
-      resource.type === "pdf-guide"
+      resource.type === "pdf-guide" || resource.type === "comic"
         ? null
         : element("div", { className: "media-toolbar" }, [
         element("p", {

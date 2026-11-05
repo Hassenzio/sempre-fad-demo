@@ -1568,6 +1568,33 @@ h1[tabindex="-1"]:focus {
   box-shadow: var(--shadow);
 }
 
+/* Lettura delle tavole: un piano continuo, senza effetto sfogliatura. */
+.comic-track {
+  display: flex;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  touch-action: pan-x pan-y;
+}
+.comic-track::-webkit-scrollbar { display: none; }
+.comic-track:focus-visible { outline: 3px solid #f7aa10; outline-offset: -3px; }
+.comic-slide { flex: 0 0 100%; min-width: 0; scroll-snap-align: start; scroll-snap-stop: always; }
+.comic-slide img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: contain; }
+.comic-controls {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; padding: .8rem 1.2rem; background: var(--slate-800);
+}
+.comic-hint { color: var(--muted); font-size: .85rem; }
+.comic-navigation { display: flex; align-items: center; gap: .7rem; }
+.comic-count { min-width: 4.3rem; color: #f9f7f2; text-align: center; font-size: .85rem; font-variant-numeric: tabular-nums; }
+.comic-arrow {
+  width: 2.6rem; height: 2.6rem; border: 1px solid rgb(255 255 255 / 24%);
+  border-radius: 50%; color: #fff; background: transparent; font-size: 1.2rem; cursor: pointer;
+}
+.comic-arrow:hover:not(:disabled), .comic-arrow:focus-visible { border-color: #f7aa10; color: #f7aa10; }
+.comic-arrow:disabled { opacity: .3; cursor: default; }
+
 .video-frame {
   position: relative;
   aspect-ratio: 16 / 9;

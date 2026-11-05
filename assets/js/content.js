@@ -210,6 +210,24 @@ window.courseData = Object.freeze({
             description: "Competenze Emotive-Comunicazionali",
             iframeTitle: "Capitolo 2 Modulo 1: Accoglienza e costruzione della fiducia",
             embedUrl: "https://heyzine.com/flip-book/b222cd0335.html"
+          }, {
+            id: "fumetto-primo-contatto",
+            order: 2,
+            type: "comic",
+            category: "Fumetto",
+            title: "Primo contatto",
+            description: "Accoglienza e comunicazione con i pazienti autistici.",
+            pageCount: 14,
+            pagePath: "assets/comic-primo-contatto/page-{page}.jpg"
+          }, {
+            id: "videoclip-primo-contatto",
+            order: 3,
+            type: "vimeo",
+            category: "Videoclip",
+            title: "MiniGuida Primo Contatto",
+            description: "Videoclip sul primo contatto.",
+            iframeTitle: "C2 M1 MiniGuida Primo Contatto",
+            embedUrl: "https://player.vimeo.com/video/1243681656?h=e742b4b72d"
           }]
         },
         {
