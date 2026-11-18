@@ -897,7 +897,7 @@
             }),
             element("p", {
               className: "availability-note",
-              text: hasAvailable ? "Il Modulo 1 è disponibile nella demo. Gli altri contenuti sono in preparazione." : "I contenuti di questo capitolo non sono inclusi nella versione dimostrativa."
+              text: hasAvailable ? "I Moduli 1 e 2 sono disponibili nella demo. Gli altri contenuti sono in preparazione." : "I contenuti di questo capitolo non sono inclusi nella versione dimostrativa."
             }),
             element("div", { className: "button-row" }, [
               buttonLink("Torna al percorso", "#/", "secondary")
@@ -918,7 +918,7 @@
             element("h2", { text: "La struttura prevista." })
           ]),
           element("p", {
-            text: hasAvailable ? "Esplora il modulo disponibile; gli altri contenuti sono in preparazione." : "I moduli sono mostrati per descrivere l’architettura futura. Non contengono ancora risorse navigabili."
+            text: hasAvailable ? "Esplora i moduli disponibili; gli altri contenuti sono in preparazione." : "I moduli sono mostrati per descrivere l’architettura futura. Non contengono ancora risorse navigabili."
           })
         ]),
         element("div", {

@@ -236,14 +236,23 @@ window.courseData = Object.freeze({
           title: "Modulo 2",
           subtitle: "CAA e strumenti educativi",
           description: "Comunicazione Aumentativa Alternativa, agende visive, token economy, contratto e social stories.",
-          status: "coming-soon",
-          statusLabel: "Contenuti in preparazione",
+          status: "available",
+          statusLabel: "Disponibile in demo",
           sourceItems: [
             "Comunicazione Aumentativa Alternativa",
             "Agende visive e strumenti educativi",
             "Social stories"
           ],
-          resources: []
+          resources: [{
+            id: "flipbook",
+            order: 1,
+            type: "heyzine",
+            category: "Materiale di approfondimento",
+            title: "Autismo e i bisogni comunicativi in odontoiatria",
+            description: "Comunicazione Aumentativa e Alternativa",
+            iframeTitle: "Capitolo 2 Modulo 2: Autismo e i bisogni comunicativi in odontoiatria",
+            embedUrl: "https://heyzine.com/flip-book/108c3e19ca.html"
+          }]
         },
         {
           id: "modulo-3",
