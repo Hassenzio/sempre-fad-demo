@@ -114,6 +114,7 @@
     resource.type === "vimeo" || resource.type === "youtube";
 
   const resourceIconName = (resource) => {
+    if (resource.formatLabel === "Card Interview") return "dialogue";
     if (resource.type === "comic") return "pages";
     if (resource.type === "pdf-guide") return "pages";
     if (resource.type === "heyzine") return "pages";
@@ -121,6 +122,7 @@
   };
 
   const resourceActionLabel = (resource) => {
+    if (resource.actionLabel) return resource.actionLabel;
     if (resource.type === "comic") return "Leggi il fumetto";
     if (resource.id === "videoclip-primo-contatto") return "Guarda il videoclip";
     if (resource.type === "video-session") return "Esplora i 9 video";
@@ -586,13 +588,13 @@
     const currentIndex = moduleResources.findIndex((item) => item.id === resource.id);
     const previous = moduleResources[currentIndex - 1];
     const next = moduleResources[currentIndex + 1];
-    const shortLabel = resource.type === "pdf-guide"
+    const shortLabel = resource.formatLabel || (resource.type === "pdf-guide"
       ? "Presentazione guida"
       : resource.type === "comic" ? "Fumetto"
       : resource.id === "videoclip-primo-contatto" ? "Videoclip"
       : resource.id === "flipbook"
         ? "Flipbook"
-        : `Parte ${resource.order}`;
+        : `Parte ${resource.order}`);
 
     const mediaViewport = element("div", {
       className: resource.type === "comic" ? "comic-frame" : resource.type === "pdf-guide"
@@ -1195,7 +1197,7 @@
           element("strong", { text: module.subtitle }),
           element("small", {
             className: module.status === "available" ? "is-available" : "",
-            text: `${module.title} · ${module.status === "available" ? "Disponibile" : "In preparazione"}`
+            text: `${module.title} · ${module.status === "available" ? "Disponibile" : "In preparazione"}${module.menuSummary ? ` · ${module.menuSummary}` : ""}`
           })
         ]),
         element("span", { className: "chapter-module-arrow", text: "→", "aria-hidden": "true" })

@@ -235,13 +235,15 @@ window.courseData = Object.freeze({
           number: 2,
           title: "Modulo 2",
           subtitle: "CAA e strumenti educativi",
-          description: "Comunicazione Aumentativa Alternativa, agende visive, token economy, contratto e social stories.",
+          description: "Comunicazione Aumentativa Alternativa, agende visive, token economy, contratto e social stories. Due contenuti disponibili: il flipbook e la Card Interview con Riccardo Del Lupo e Andrea Fattori.",
+          menuSummary: "2 contenuti: Flipbook e Card Interview",
           status: "available",
           statusLabel: "Disponibile in demo",
           sourceItems: [
             "Comunicazione Aumentativa Alternativa",
             "Agende visive e strumenti educativi",
-            "Social stories"
+            "Social stories",
+            "Card Interview: Riccardo Del Lupo intervista Andrea Fattori"
           ],
           resources: [{
             id: "flipbook",
@@ -252,6 +254,17 @@ window.courseData = Object.freeze({
             description: "Comunicazione Aumentativa e Alternativa",
             iframeTitle: "Capitolo 2 Modulo 2: Autismo e i bisogni comunicativi in odontoiatria",
             embedUrl: "https://heyzine.com/flip-book/108c3e19ca.html"
+          }, {
+            id: "card-interview",
+            order: 2,
+            type: "heyzine",
+            formatLabel: "Card Interview",
+            actionLabel: "Apri la Card Interview",
+            category: "Card Interview",
+            title: "Riccardo Del Lupo intervista Andrea Fattori",
+            description: "Video pillole · Capitolo 2, Modulo 2.",
+            iframeTitle: "Card Interview: Riccardo Del Lupo intervista Andrea Fattori",
+            embedUrl: "https://heyzine.com/flip-book/b6bbacd072.html"
           }]
         },
         {
